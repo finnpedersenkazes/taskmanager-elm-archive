@@ -1,0 +1,11 @@
+{
+  "main.css": "/taskmanager-elm/static/css/main.233a2046.chunk.css",
+  "main.js": "/taskmanager-elm/static/js/main.c1403f7f.chunk.js",
+  "main.css.map": "/taskmanager-elm/static/css/main.233a2046.chunk.css.map",
+  "main.js.map": "/taskmanager-elm/static/js/main.c1403f7f.chunk.js.map",
+  "runtime~main.js": "/taskmanager-elm/static/js/runtime~main.ef4ddf3f.js",
+  "runtime~main.js.map": "/taskmanager-elm/static/js/runtime~main.ef4ddf3f.js.map",
+  "vendors~main.js": "/taskmanager-elm/static/js/vendors~main.3ca81432.chunk.js",
+  "vendors~main.js.map": "/taskmanager-elm/static/js/vendors~main.3ca81432.chunk.js.map",
+  "index.html": "/taskmanager-elm/index.html"
+}
