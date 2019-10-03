@@ -280,7 +280,15 @@ viewMenu model =
                 ]
                 [ text "New Task" ]
             , a
-                [ class "dropdown-item"
+                [ class
+                    ("dropdown-item"
+                        ++ (if taskId == 0 then
+                                " disabled"
+
+                            else
+                                ""
+                           )
+                    )
                 , href "#"
                 ]
                 [ text "Edit Task" ]
