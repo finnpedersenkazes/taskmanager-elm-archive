@@ -4,6 +4,7 @@ import Debug exposing (log)
 import Http
 import Json.Decode as Decode exposing (Decoder, andThen, fail, field, float, int, list, map, map2, map5, string, succeed)
 import Json.Decode.Pipeline as Pipeline exposing (custom, hardcoded, optional, required)
+import Json.Encode as Encode exposing (Value, encode, object)
 import Model.Model exposing (..)
 import Update.Secrets exposing (appId)
 
@@ -40,6 +41,49 @@ deleteTaskEntity taskId =
         }
 
 
+postTaskEntity : TaskEntity -> Cmd Msg
+postTaskEntity task =
+    let
+        taskBody =
+            Http.jsonBody (taskEntityJson task)
+    in
+    Http.request
+        { method = "POST"
+        , headers =
+            [ Http.header "X-User-Email" "finn@gmail.com"
+            , Http.header "X-User-Token" "o747qePsDnFn8KsjCaAn"
+            ]
+        , url = api
+        , body = taskBody
+        , expect = Http.expectJson AfterGetTaskEntity taskEntityDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+patchTaskEntity : TaskEntity -> Cmd Msg
+patchTaskEntity task =
+    let
+        urlTaskEntity =
+            api ++ "/" ++ String.fromInt task.id
+
+        taskBody =
+            Http.jsonBody (taskEntityJson task)
+    in
+    Http.request
+        { method = "PATCH"
+        , headers =
+            [ Http.header "X-User-Email" "finn@gmail.com"
+            , Http.header "X-User-Token" "o747qePsDnFn8KsjCaAn"
+            ]
+        , url = urlTaskEntity
+        , body = taskBody
+        , expect = Http.expectJson AfterGetTaskEntity taskEntityDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
 getTaskEntity : Id -> Cmd Msg
 getTaskEntity taskId =
     let
@@ -48,7 +92,7 @@ getTaskEntity taskId =
     in
     Http.get
         { url = urlTaskEntity
-        , expect = Http.expectJson NewTaskEntity taskEntityDecoder
+        , expect = Http.expectJson AfterGetTaskEntity taskEntityDecoder
         }
 
 
@@ -60,7 +104,7 @@ getTaskEntityList =
     in
     Http.get
         { url = urlTaskEntity
-        , expect = Http.expectJson NewTaskEntityList taskEntityListDecoder
+        , expect = Http.expectJson AfterGetTaskEntityList taskEntityListDecoder
         }
 
 
@@ -84,6 +128,25 @@ taskEntityDecoder =
         |> optional "status" int 0
         |> required "created_at" string
         |> required "updated_at" string
+
+
+taskEntityJson : TaskEntity -> Value
+taskEntityJson task =
+    object
+        [ ( "task"
+          , object
+                [ ( "title", Encode.string task.title )
+                , ( "description", Encode.string task.description )
+                , ( "urgency", Encode.int task.urgency )
+                , ( "duration_minutes", Encode.int task.durationMinutes )
+                , ( "attention_date", Encode.string task.attentionDate )
+                , ( "deadline", Encode.string task.deadline )
+                , ( "planned_date", Encode.string task.plannedDate )
+                , ( "planned_starting_time", Encode.string task.plannedStartingTime )
+                , ( "status", Encode.int task.status )
+                ]
+          )
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,16 +176,38 @@ update msg model =
         GetTaskEntityList ->
             ( LoadingList, getTaskEntityList )
 
-        NewTaskEntity (Ok newTaskEntity) ->
-            ( SuccessEntity newTaskEntity, Cmd.none )
+        AfterGetTaskEntity (Ok taskEntity) ->
+            ( SuccessEntity taskEntity, Cmd.none )
 
-        NewTaskEntity (Err _) ->
+        AfterGetTaskEntity (Err _) ->
             ( Failure, Cmd.none )
 
-        NewTaskEntityList (Ok newTaskEntityList) ->
-            ( SuccessEntityList newTaskEntityList, Cmd.none )
+        AfterGetTaskEntityList (Ok taskEntity) ->
+            ( SuccessEntityList taskEntity, Cmd.none )
 
-        NewTaskEntityList (Err _) ->
+        AfterGetTaskEntityList (Err _) ->
+            ( Failure, Cmd.none )
+
+        CreateTaskEntity ->
+            ( CreatingEntity initTaskEntity, postTaskEntity initTaskEntity )
+
+        AfterCreateTaskEntity (Ok taskEntity) ->
+            ( SuccessEntity taskEntity, Cmd.none )
+
+        AfterCreateTaskEntity (Err _) ->
+            ( Failure, Cmd.none )
+
+        EditTaskEntity taskEntity ->
+            let
+                updatedTaskEntity =
+                    { taskEntity | description = "You have been updated" }
+            in
+            ( EditingEntity updatedTaskEntity, patchTaskEntity updatedTaskEntity )
+
+        AfterSaveTaskEntity (Ok taskEntity) ->
+            ( SuccessEntity taskEntity, Cmd.none )
+
+        AfterSaveTaskEntity (Err _) ->
             ( Failure, Cmd.none )
 
         AfterDeleteTaskEntry (Ok _) ->

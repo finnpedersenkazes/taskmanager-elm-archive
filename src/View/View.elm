@@ -23,6 +23,13 @@ viewTaskEntity model =
                     ]
                 ]
 
+        NotImplementedYet ->
+            div [ class "card", style "width" "18rem" ]
+                [ div [ class "card-body" ]
+                    [ h5 [ class "card-title text-primary" ] [ text "This function has not been implemented yet." ]
+                    ]
+                ]
+
         Typing taskId ->
             viewInput taskId
 
@@ -44,6 +51,20 @@ viewTaskEntity model =
             div [ class "card", style "width" "18rem" ]
                 [ div [ class "card-body" ]
                     [ h5 [ class "card-title text-primary" ] [ text "Loading All Tasks" ]
+                    ]
+                ]
+
+        CreatingEntity taskEntity ->
+            div [ class "card", style "width" "18rem" ]
+                [ div [ class "card-body" ]
+                    [ h5 [ class "card-title text-primary" ] [ text "Creating a Task" ]
+                    ]
+                ]
+
+        EditingEntity taskEntity ->
+            div [ class "card", style "width" "18rem" ]
+                [ div [ class "card-body" ]
+                    [ h5 [ class "card-title text-primary" ] [ text "Editing a Tasks" ]
                     ]
                 ]
 
@@ -217,7 +238,7 @@ viewInput taskId =
                     ]
                     []
                 , span [ class "text-primary" ] [ text " Search" ]
-                , span [ class "text-secondary" ] [ text " to get the weather." ]
+                , span [ class "text-secondary" ] [ text " to get the task." ]
                 ]
             , div [ class "input-group mb-3" ]
                 [ input
@@ -252,13 +273,16 @@ viewInput taskId =
 viewMenu : Model -> Html Msg
 viewMenu model =
     let
-        taskId =
+        taskEntity =
             case model of
-                SuccessEntity taskEntity ->
-                    taskEntity.id
+                SuccessEntity taskEntity2 ->
+                    taskEntity2
 
                 _ ->
-                    0
+                    initTaskEntity
+
+        taskId =
+            taskEntity.id
     in
     div [ class "dropdown" ]
         [ button
@@ -277,6 +301,7 @@ viewMenu model =
             [ a
                 [ class "dropdown-item"
                 , href "#"
+                , onClick CreateTaskEntity
                 ]
                 [ text "New Task" ]
             , a
@@ -290,6 +315,7 @@ viewMenu model =
                            )
                     )
                 , href "#"
+                , onClick (EditTaskEntity taskEntity)
                 ]
                 [ text "Edit Task" ]
             , a
@@ -305,7 +331,16 @@ viewMenu model =
                 , href "#"
                 , onClick (DeleteTaskEntity taskId)
                 ]
-                [ text "Delete Task" ]
+                [ text
+                    ("Delete Task"
+                        ++ (if taskId > 0 then
+                                " No. " ++ String.fromInt taskId
+
+                            else
+                                ""
+                           )
+                    )
+                ]
             , div [ class "dropdown-divider" ] []
             , a
                 [ class "dropdown-item"

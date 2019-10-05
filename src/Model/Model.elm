@@ -1,4 +1,4 @@
-module Model.Model exposing (Id, Model(..), Msg(..), TaskEntity, TaskEntityList, init)
+module Model.Model exposing (Id, Model(..), Msg(..), TaskEntity, TaskEntityList, init, initTaskEntity)
 
 import Http
 
@@ -11,18 +11,25 @@ type Msg
     = GetTaskEntity Id
     | GetTaskId String
     | GetTaskEntityList
-    | NewTaskEntity (Result Http.Error TaskEntity)
-    | NewTaskEntityList (Result Http.Error TaskEntityList)
+    | AfterGetTaskEntity (Result Http.Error TaskEntity)
+    | AfterGetTaskEntityList (Result Http.Error TaskEntityList)
+    | CreateTaskEntity
+    | AfterCreateTaskEntity (Result Http.Error TaskEntity)
+    | EditTaskEntity TaskEntity
+    | AfterSaveTaskEntity (Result Http.Error TaskEntity)
     | DeleteTaskEntity Id
     | AfterDeleteTaskEntry (Result Http.Error ())
 
 
 type Model
     = Failure
+    | NotImplementedYet
     | Typing Id
     | Loading Id
     | LoadingList
     | Deleting Id
+    | CreatingEntity TaskEntity
+    | EditingEntity TaskEntity
     | SuccessEntity TaskEntity
     | SuccessEntityList TaskEntityList
 
@@ -49,6 +56,11 @@ type alias TaskEntity =
     , createdAt : String
     , updatedAt : String
     }
+
+
+initTaskEntity : TaskEntity
+initTaskEntity =
+    TaskEntity 0 "Type your Title here" "" 0 0 "" "" "" "" 0 "" ""
 
 
 init : () -> ( Model, Cmd Msg )
