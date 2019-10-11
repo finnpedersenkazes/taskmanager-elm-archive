@@ -1,4 +1,4 @@
-module Model.Model exposing (Id, Model(..), Msg(..), TaskEntity, TaskEntityList, init, initTaskEntity)
+module Model.Model exposing (Id, Model(..), Msg(..), TaskEntity, TaskEntityField(..), TaskEntityList, init, initTaskEntity)
 
 import Http
 
@@ -8,14 +8,16 @@ type alias Id =
 
 
 type Msg
-    = GetTaskEntity Id
+    = NoOp
+    | SetTaskEntity TaskEntity TaskEntityField String
+    | GetTaskEntity Id
     | GetTaskId String
     | GetTaskEntityList
     | AfterGetTaskEntity (Result Http.Error TaskEntity)
     | AfterGetTaskEntityList (Result Http.Error TaskEntityList)
     | CreateTaskEntity
     | AfterCreateTaskEntity (Result Http.Error TaskEntity)
-    | EditTaskEntity TaskEntity
+    | SaveTaskEntity TaskEntity
     | AfterSaveTaskEntity (Result Http.Error TaskEntity)
     | DeleteTaskEntity Id
     | AfterDeleteTaskEntry (Result Http.Error ())
@@ -30,12 +32,8 @@ type Model
     | Deleting Id
     | CreatingEntity TaskEntity
     | EditingEntity TaskEntity
-    | SuccessEntity TaskEntity
-    | SuccessEntityList TaskEntityList
-
-
-
--- https://github.com/finnpedersenkazes/taskmanager02
+    | DisplayingEntity TaskEntity
+    | DisplayingEntityList TaskEntityList
 
 
 type alias TaskEntityList =
@@ -58,6 +56,11 @@ type alias TaskEntity =
     }
 
 
+type TaskEntityField
+    = Title
+    | Description
+
+
 initTaskEntity : TaskEntity
 initTaskEntity =
     TaskEntity 0 "Type your Title here" "" 0 0 "" "" "" "" 0 "" ""
@@ -65,6 +68,6 @@ initTaskEntity =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Typing 26
+    ( Typing 0
     , Cmd.none
     )

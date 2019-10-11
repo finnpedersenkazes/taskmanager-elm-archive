@@ -1,4 +1,4 @@
-module Update.Update exposing (api, getTaskEntity, getTaskEntityList, taskEntityDecoder, taskEntityListDecoder, update)
+module Update.Update exposing (api, deleteTaskEntity, getTaskEntity, getTaskEntityList, patchTaskEntity, postTaskEntity, taskEntityDecoder, taskEntityJson, taskEntityListDecoder, update)
 
 import Debug exposing (log)
 import Http
@@ -14,13 +14,6 @@ api =
     "https://taskmanager01-api.herokuapp.com/tasks"
 
 
-
-{-
-   https://taskmanager01-api.herokuapp.com/tasks
-   https://test-app-vue-01.herokuapp.com/api/v1/tasks/26
--}
-
-
 deleteTaskEntity : Id -> Cmd Msg
 deleteTaskEntity taskId =
     let
@@ -29,10 +22,7 @@ deleteTaskEntity taskId =
     in
     Http.request
         { method = "DELETE"
-        , headers =
-            [ Http.header "X-User-Email" "finn@gmail.com"
-            , Http.header "X-User-Token" "o747qePsDnFn8KsjCaAn"
-            ]
+        , headers = []
         , url = urlTaskEntity
         , body = Http.emptyBody
         , expect = Http.expectWhatever AfterDeleteTaskEntry
@@ -49,10 +39,7 @@ postTaskEntity task =
     in
     Http.request
         { method = "POST"
-        , headers =
-            [ Http.header "X-User-Email" "finn@gmail.com"
-            , Http.header "X-User-Token" "o747qePsDnFn8KsjCaAn"
-            ]
+        , headers = []
         , url = api
         , body = taskBody
         , expect = Http.expectJson AfterGetTaskEntity taskEntityDecoder
@@ -72,10 +59,7 @@ patchTaskEntity task =
     in
     Http.request
         { method = "PATCH"
-        , headers =
-            [ Http.header "X-User-Email" "finn@gmail.com"
-            , Http.header "X-User-Token" "o747qePsDnFn8KsjCaAn"
-            ]
+        , headers = []
         , url = urlTaskEntity
         , body = taskBody
         , expect = Http.expectJson AfterGetTaskEntity taskEntityDecoder
@@ -152,6 +136,21 @@ taskEntityJson task =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        SetTaskEntity taskEntity taskEntityField value ->
+            let
+                updatedTaskEntity =
+                    case taskEntityField of
+                        Title ->
+                            { taskEntity | title = value }
+
+                        Description ->
+                            { taskEntity | description = value }
+            in
+            ( EditingEntity updatedTaskEntity, Cmd.none )
+
         GetTaskId idString ->
             let
                 id =
@@ -177,13 +176,13 @@ update msg model =
             ( LoadingList, getTaskEntityList )
 
         AfterGetTaskEntity (Ok taskEntity) ->
-            ( SuccessEntity taskEntity, Cmd.none )
+            ( DisplayingEntity taskEntity, Cmd.none )
 
         AfterGetTaskEntity (Err _) ->
             ( Failure, Cmd.none )
 
         AfterGetTaskEntityList (Ok taskEntity) ->
-            ( SuccessEntityList taskEntity, Cmd.none )
+            ( DisplayingEntityList taskEntity, Cmd.none )
 
         AfterGetTaskEntityList (Err _) ->
             ( Failure, Cmd.none )
@@ -192,20 +191,16 @@ update msg model =
             ( CreatingEntity initTaskEntity, postTaskEntity initTaskEntity )
 
         AfterCreateTaskEntity (Ok taskEntity) ->
-            ( SuccessEntity taskEntity, Cmd.none )
+            ( DisplayingEntity taskEntity, Cmd.none )
 
         AfterCreateTaskEntity (Err _) ->
             ( Failure, Cmd.none )
 
-        EditTaskEntity taskEntity ->
-            let
-                updatedTaskEntity =
-                    { taskEntity | description = "You have been updated" }
-            in
-            ( EditingEntity updatedTaskEntity, patchTaskEntity updatedTaskEntity )
+        SaveTaskEntity taskEntity ->
+            ( EditingEntity taskEntity, patchTaskEntity taskEntity )
 
         AfterSaveTaskEntity (Ok taskEntity) ->
-            ( SuccessEntity taskEntity, Cmd.none )
+            ( DisplayingEntity taskEntity, Cmd.none )
 
         AfterSaveTaskEntity (Err _) ->
             ( Failure, Cmd.none )

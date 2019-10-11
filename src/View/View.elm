@@ -3,10 +3,10 @@ module View.View exposing (view)
 import Array exposing (..)
 import Debug
 import FontAwesome exposing (icon, search)
-import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, li, p, span, table, tbody, td, text, th, thead, tr, ul)
+import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, p, span, table, tbody, td, text, th, thead, tr, ul)
 import Html.Attributes exposing (attribute, class, href, id, placeholder, property, scope, src, style, type_, value)
 import Html.Attributes.Aria exposing (ariaExpanded, ariaHasPopup, ariaHidden, ariaLabel, ariaLabelledby)
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (onClick, onInput, onSubmit)
 import Iso8601
 import Model.Model exposing (..)
 import Round
@@ -65,10 +65,11 @@ viewTaskEntity model =
             div [ class "card", style "width" "18rem" ]
                 [ div [ class "card-body" ]
                     [ h5 [ class "card-title text-primary" ] [ text "Editing a Tasks" ]
+                    , viewForm taskEntity
                     ]
                 ]
 
-        SuccessEntity taskEntity ->
+        DisplayingEntity taskEntity ->
             div [ class "card", style "width" "18rem" ]
                 [ div [ class "card-body" ]
                     [ h5 [ class "card-title text-success" ] [ text (String.concat [ taskEntity.title, " (", String.fromInt taskEntity.id, ")" ]) ]
@@ -85,7 +86,7 @@ viewTaskEntity model =
                     ]
                 ]
 
-        SuccessEntityList taskEntityList ->
+        DisplayingEntityList taskEntityList ->
             div [ class "card", style "width" "22rem" ]
                 [ div [ class "card-body" ]
                     [ h5 [ class "card-title text-success" ] [ text (String.concat [ "Task List" ]) ]
@@ -270,12 +271,44 @@ viewInput taskId =
         ]
 
 
+viewForm : TaskEntity -> Html Msg
+viewForm taskEntity =
+    Html.form
+        [ onSubmit (SaveTaskEntity taskEntity)
+        , class "form-container"
+        ]
+        [ label []
+            [ text "Title"
+            , input
+                [ type_ "text"
+                , placeholder "Title"
+                , onInput (SetTaskEntity taskEntity Title)
+                , value taskEntity.title
+                ]
+                []
+            ]
+        , label []
+            [ text "Description"
+            , input
+                [ type_ "text"
+                , placeholder "Description"
+                , onInput (SetTaskEntity taskEntity Description)
+                , value taskEntity.description
+                ]
+                []
+            ]
+        , button
+            []
+            [ text "Submit" ]
+        ]
+
+
 viewMenu : Model -> Html Msg
 viewMenu model =
     let
         taskEntity =
             case model of
-                SuccessEntity taskEntity2 ->
+                DisplayingEntity taskEntity2 ->
                     taskEntity2
 
                 _ ->
@@ -315,7 +348,7 @@ viewMenu model =
                            )
                     )
                 , href "#"
-                , onClick (EditTaskEntity taskEntity)
+                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
                 ]
                 [ text "Edit Task" ]
             , a
