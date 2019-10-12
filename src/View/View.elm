@@ -3,8 +3,8 @@ module View.View exposing (view)
 import Array exposing (..)
 import Debug
 import FontAwesome exposing (icon, search)
-import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, p, span, table, tbody, td, text, th, thead, tr, ul)
-import Html.Attributes exposing (attribute, class, href, id, placeholder, property, scope, src, style, type_, value)
+import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, p, span, table, tbody, td, text, textarea, th, thead, tr, ul)
+import Html.Attributes exposing (attribute, class, href, id, placeholder, property, rows, scope, src, style, type_, value)
 import Html.Attributes.Aria exposing (ariaExpanded, ariaHasPopup, ariaHidden, ariaLabel, ariaLabelledby)
 import Html.Events exposing (onClick, onInput, onSubmit)
 import Iso8601
@@ -274,32 +274,59 @@ viewInput taskId =
 viewForm : TaskEntity -> Html Msg
 viewForm taskEntity =
     Html.form
-        [ onSubmit (SaveTaskEntity taskEntity)
-        , class "form-container"
+        [ onSubmit
+            (if taskEntity.id == 0 then
+                CreateTaskEntity
+
+             else
+                SaveTaskEntity taskEntity
+            )
         ]
-        [ label []
-            [ text "Title"
+        [ div [ class "form-group" ]
+            [ label []
+                [ text "Title" ]
             , input
                 [ type_ "text"
                 , placeholder "Title"
                 , onInput (SetTaskEntity taskEntity Title)
                 , value taskEntity.title
+                , class "form-control"
                 ]
                 []
             ]
-        , label []
-            [ text "Description"
-            , input
-                [ type_ "text"
-                , placeholder "Description"
+        , div [ class "form-group" ]
+            [ label []
+                [ text "Description" ]
+            , textarea
+                [ placeholder "Description"
                 , onInput (SetTaskEntity taskEntity Description)
                 , value taskEntity.description
+                , class "form-control"
+                , rows 4
                 ]
                 []
             ]
-        , button
-            []
-            [ text "Submit" ]
+        , div [ class "form-group" ]
+            [ button
+                [ type_ "submit"
+                , class "btn btn-outline-primary"
+                ]
+                [ text
+                    (if taskEntity.id == 0 then
+                        "Create"
+
+                     else
+                        "Save"
+                    )
+                ]
+            , span [] [ text " " ]
+            , button
+                [ class "btn btn-outline-warning"
+                , type_ "button"
+                , onClick (GetTaskEntity taskEntity.id)
+                ]
+                [ text "Cancel" ]
+            ]
         ]
 
 
@@ -334,7 +361,7 @@ viewMenu model =
             [ a
                 [ class "dropdown-item"
                 , href "#"
-                , onClick CreateTaskEntity
+                , onClick (SetTaskEntity initTaskEntity Title taskEntity.title)
                 ]
                 [ text "New Task" ]
             , a
