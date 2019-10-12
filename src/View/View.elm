@@ -64,7 +64,15 @@ viewTaskEntity model =
         EditingEntity taskEntity ->
             div [ class "card", style "width" "18rem" ]
                 [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text "Editing a Tasks" ]
+                    [ h5 [ class "card-title text-primary" ]
+                        [ text
+                            (if taskEntity.id == 0 then
+                                "Create a Task"
+
+                             else
+                                "Editing a Task"
+                            )
+                        ]
                     , viewForm taskEntity
                     ]
                 ]
@@ -361,7 +369,7 @@ viewMenu model =
             [ a
                 [ class "dropdown-item"
                 , href "#"
-                , onClick (SetTaskEntity initTaskEntity Title taskEntity.title)
+                , onClick (SetTaskEntity initTaskEntity Title "")
                 ]
                 [ text "New Task" ]
             , a
