@@ -9,6 +9,7 @@ type alias Id =
 
 type Msg
     = NoOp
+    | GoToHomePage
     | SetTaskEntity TaskEntity TaskEntityField String
     | GetTaskEntity Id
     | GetTaskId String
@@ -26,6 +27,7 @@ type Msg
 type Model
     = Failure
     | NotImplementedYet
+    | HomePage
     | Typing Id
     | Loading Id
     | LoadingList
@@ -68,6 +70,4 @@ initTaskEntity =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Typing 0
-    , Cmd.none
-    )
+    ( HomePage, Cmd.none )

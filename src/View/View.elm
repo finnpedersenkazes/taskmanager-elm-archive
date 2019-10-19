@@ -30,6 +30,13 @@ viewTaskEntity model =
                     ]
                 ]
 
+        HomePage ->
+            div [ class "card", style "width" "18rem" ]
+                [ div [ class "card-body" ]
+                    [ h5 [ class "card-title text-primary" ] [ text "Welcome to Task Manager." ]
+                    ]
+                ]
+
         Typing taskId ->
             viewInput taskId
 
@@ -338,6 +345,159 @@ viewForm taskEntity =
         ]
 
 
+viewTaskEntityMenuButton : Model -> Html Msg
+viewTaskEntityMenuButton model =
+    let
+        taskEntity =
+            case model of
+                DisplayingEntity taskEntity2 ->
+                    taskEntity2
+
+                _ ->
+                    initTaskEntity
+
+        taskId =
+            taskEntity.id
+    in
+    div [ class "btn-group", role "group" ]
+        [ button
+            [ class "btn btn-outline-primary dropdown-toggle"
+            , type_ "button"
+            , id "dropdownTaskMenuButton"
+            , attribute "data-toggle" "dropdown"
+            , ariaHasPopup "menu"
+            , ariaExpanded "false"
+            ]
+            [ text "Task" ]
+        , div
+            [ class "dropdown-menu"
+            , ariaLabelledby "dropdownMenuButton"
+            ]
+            [ a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick (SetTaskEntity initTaskEntity Title "")
+                ]
+                [ text "New Task" ]
+            , a
+                [ class
+                    ("dropdown-item"
+                        ++ (if taskId == 0 then
+                                " disabled"
+
+                            else
+                                ""
+                           )
+                    )
+                , href "#"
+                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
+                ]
+                [ text "Edit Task" ]
+            , a
+                [ class
+                    ("dropdown-item"
+                        ++ (if taskId == 0 then
+                                " disabled"
+
+                            else
+                                ""
+                           )
+                    )
+                , href "#"
+                , onClick (DeleteTaskEntity taskId)
+                ]
+                [ text
+                    ("Delete Task"
+                        ++ (if taskId > 0 then
+                                " No. " ++ String.fromInt taskId
+
+                            else
+                                ""
+                           )
+                    )
+                ]
+            , div [ class "dropdown-divider" ] []
+            , a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick (GetTaskId "")
+                ]
+                [ text "Search for Task" ]
+            , div [ class "dropdown-divider" ] []
+            , a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick GetTaskEntityList
+                ]
+                [ text "Get All Tasks" ]
+            ]
+        ]
+
+
+viewTaskFunctionsMenuButton : Model -> Html Msg
+viewTaskFunctionsMenuButton model =
+    let
+        taskEntity =
+            case model of
+                DisplayingEntity taskEntity2 ->
+                    taskEntity2
+
+                _ ->
+                    initTaskEntity
+
+        taskId =
+            taskEntity.id
+    in
+    div [ class "btn-group", role "group" ]
+        [ button
+            [ class
+                ("btn btn-outline-primary dropdown-toggle"
+                    ++ (if taskId == 0 then
+                            " disabled"
+
+                        else
+                            ""
+                       )
+                )
+            , type_ "button"
+            , id "dropdownFunctionMenuButton"
+            , attribute "data-toggle" "dropdown"
+            , ariaHasPopup "menu"
+            , ariaExpanded "false"
+            ]
+            [ text "Functions" ]
+        , div
+            [ class "dropdown-menu"
+            , ariaLabelledby "dropdownMenuButton"
+            ]
+            [ a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick NoOp
+                ]
+                [ text "Plan Task" ]
+            , a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick NoOp
+                ]
+                [ text "Unplan Task" ]
+            , a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick NoOp
+                ]
+                [ text "Mark Task as Done" ]
+            , a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick NoOp
+                ]
+                [ text "Put Task in Bin" ]
+            ]
+        ]
+
+
 viewMenu : Model -> Html Msg
 viewMenu model =
     let
@@ -352,130 +512,20 @@ viewMenu model =
         taskId =
             taskEntity.id
     in
-    div [ class "btn-toolbar", style "text-align" "center", role "toolbar" ]
-        [ div [ class "btn-group p-3", role "group" ]
-            [ div [ class "dropdown" ]
-                [ button
-                    [ class "btn btn-outline-primary dropdown-toggle"
-                    , type_ "button"
-                    , id "dropdownTaskMenuButton"
-                    , attribute "data-toggle" "dropdown"
-                    , ariaHasPopup "menu"
-                    , ariaExpanded "false"
-                    ]
-                    [ text "Task" ]
-                , div
-                    [ class "dropdown-menu"
-                    , ariaLabelledby "dropdownMenuButton"
-                    ]
-                    [ a
-                        [ class "dropdown-item"
-                        , href "#"
-                        , onClick (SetTaskEntity initTaskEntity Title "")
-                        ]
-                        [ text "New Task" ]
-                    , a
-                        [ class
-                            ("dropdown-item"
-                                ++ (if taskId == 0 then
-                                        " disabled"
-
-                                    else
-                                        ""
-                                   )
-                            )
-                        , href "#"
-                        , onClick (SetTaskEntity taskEntity Title taskEntity.title)
-                        ]
-                        [ text "Edit Task" ]
-                    , a
-                        [ class
-                            ("dropdown-item"
-                                ++ (if taskId == 0 then
-                                        " disabled"
-
-                                    else
-                                        ""
-                                   )
-                            )
-                        , href "#"
-                        , onClick (DeleteTaskEntity taskId)
-                        ]
-                        [ text
-                            ("Delete Task"
-                                ++ (if taskId > 0 then
-                                        " No. " ++ String.fromInt taskId
-
-                                    else
-                                        ""
-                                   )
-                            )
-                        ]
-                    , div [ class "dropdown-divider" ] []
-                    , a
-                        [ class "dropdown-item"
-                        , href "#"
-                        , onClick (GetTaskId "")
-                        ]
-                        [ text "Get Task by Id" ]
-                    , div [ class "dropdown-divider" ] []
-                    , a
-                        [ class "dropdown-item"
-                        , href "#"
-                        , onClick GetTaskEntityList
-                        ]
-                        [ text "Get All Tasks" ]
-                    ]
+    div [ class "p-2" ]
+        [ div [ class "btn-toolbar", role "toolbar", ariaLabel "Toolbar" ]
+            [ div [ class "btn-group mr-2", role "group", ariaLabel "TaskEntity Menu Buttons" ]
+                [ viewTaskEntityMenuButton model
+                , viewTaskFunctionsMenuButton model
                 ]
-            ]
-        , div [ class "btn-group p-3", role "group" ]
-            [ div [ class "dropdown" ]
+            , div [ class "btn-group mr-2", role "group", ariaLabel "TaskEntity Menu Buttons" ]
                 [ button
-                    [ class
-                        ("btn btn-outline-primary dropdown-toggle"
-                            ++ (if taskId == 0 then
-                                    " disabled"
-
-                                else
-                                    ""
-                               )
-                        )
-                    , type_ "button"
-                    , id "dropdownFunctionMenuButton"
-                    , attribute "data-toggle" "dropdown"
-                    , ariaHasPopup "menu"
-                    , ariaExpanded "false"
+                    [ type_ "button"
+                    , class "btn btn-outline-primary"
+                    , href "#"
+                    , onClick GoToHomePage
                     ]
-                    [ text "Functions" ]
-                , div
-                    [ class "dropdown-menu"
-                    , ariaLabelledby "dropdownMenuButton"
-                    ]
-                    [ a
-                        [ class "dropdown-item"
-                        , href "#"
-                        , onClick NoOp
-                        ]
-                        [ text "Plan Task" ]
-                    , a
-                        [ class "dropdown-item"
-                        , href "#"
-                        , onClick NoOp
-                        ]
-                        [ text "Unplan Task" ]
-                    , a
-                        [ class "dropdown-item"
-                        , href "#"
-                        , onClick NoOp
-                        ]
-                        [ text "Mark Task as Done" ]
-                    , a
-                        [ class "dropdown-item"
-                        , href "#"
-                        , onClick NoOp
-                        ]
-                        [ text "Put Task in Bin" ]
-                    ]
+                    [ text "Home" ]
                 ]
             ]
         ]

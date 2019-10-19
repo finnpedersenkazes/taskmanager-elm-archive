@@ -139,6 +139,9 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        GoToHomePage ->
+            ( HomePage, Cmd.none )
+
         SetTaskEntity taskEntity taskEntityField value ->
             let
                 updatedTaskEntity =
