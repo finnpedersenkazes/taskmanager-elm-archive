@@ -151,6 +151,23 @@ update msg model =
 
                         Description ->
                             { taskEntity | description = value }
+
+                        Status ->
+                            case value of
+                                "Unplanned" ->
+                                    { taskEntity | status = 0 }
+
+                                "Planned" ->
+                                    { taskEntity | status = 1 }
+
+                                "Done" ->
+                                    { taskEntity | status = 2 }
+
+                                "Deleted" ->
+                                    { taskEntity | status = 3 }
+
+                                _ ->
+                                    taskEntity
             in
             ( EditingEntity updatedTaskEntity, Cmd.none )
 

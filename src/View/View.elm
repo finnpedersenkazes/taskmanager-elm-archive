@@ -87,17 +87,15 @@ viewTaskEntity model =
         DisplayingEntity taskEntity ->
             div [ class "card", style "width" "18rem" ]
                 [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-success" ] [ text (String.concat [ taskEntity.title, " (", String.fromInt taskEntity.id, ")" ]) ]
-                    , div [ class "card-title text-success" ] [ text (String.concat [ taskEntity.description ]) ]
+                    [ viewTaskEntityField taskEntity Title True
+                    , viewTaskEntityField taskEntity Description True
+                    , viewTaskEntityField taskEntity Status True
                     , div [ class "card-text text-secondary" ] [ text (String.concat [ "Urgency: ", viewUrgency taskEntity.urgency ]) ]
                     , div [ class "card-text text-secondary" ] [ text (String.concat [ "Duration: ", String.fromInt taskEntity.durationMinutes, " minutes" ]) ]
                     , div [ class "card-text text-secondary" ] [ text (String.concat [ "Attention Date: ", taskEntity.attentionDate ]) ]
                     , div [ class "card-text text-secondary" ] [ text (String.concat [ "Deadline: ", taskEntity.deadline ]) ]
                     , div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Date: ", taskEntity.plannedDate ]) ]
                     , div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Starting Time: ", iso8601ToHoursMinutes taskEntity.plannedStartingTime ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Status: ", viewStatus taskEntity.status ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Created  at: ", iso8601ToDateTime taskEntity.createdAt ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Updated  at: ", iso8601ToDateTime taskEntity.updatedAt ]) ]
                     ]
                 ]
 
@@ -117,6 +115,23 @@ viewTaskEntity model =
                         ]
                     ]
                 ]
+
+
+viewTaskEntityField : TaskEntity -> TaskEntityField -> Bool -> Html Msg
+viewTaskEntityField taskEntity taskField displayField =
+    if displayField then
+        case taskField of
+            Title ->
+                h5 [ class "card-title text-success" ] [ text (String.concat [ taskEntity.title, " (", String.fromInt taskEntity.id, ")" ]) ]
+
+            Description ->
+                div [ class "card-title text-success" ] [ text (String.concat [ taskEntity.description ]) ]
+
+            Status ->
+                div [ class "card-text text-secondary" ] [ text (String.concat [ "Status: ", viewStatus taskEntity.status ]) ]
+
+    else
+        span [] []
 
 
 viewTaskEntityLine : TaskEntity -> Html Msg
@@ -149,7 +164,7 @@ viewStatus status =
             "Done"
 
         3 ->
-            "Deleted"
+            "In the bin"
 
         _ ->
             "unknown status"
@@ -380,44 +395,6 @@ viewTaskEntityMenuButton model =
                 ]
                 [ text "New Task" ]
             , a
-                [ class
-                    ("dropdown-item"
-                        ++ (if taskId == 0 then
-                                " disabled"
-
-                            else
-                                ""
-                           )
-                    )
-                , href "#"
-                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
-                ]
-                [ text "Edit Task" ]
-            , a
-                [ class
-                    ("dropdown-item"
-                        ++ (if taskId == 0 then
-                                " disabled"
-
-                            else
-                                ""
-                           )
-                    )
-                , href "#"
-                , onClick (DeleteTaskEntity taskId)
-                ]
-                [ text
-                    ("Delete Task"
-                        ++ (if taskId > 0 then
-                                " No. " ++ String.fromInt taskId
-
-                            else
-                                ""
-                           )
-                    )
-                ]
-            , div [ class "dropdown-divider" ] []
-            , a
                 [ class "dropdown-item"
                 , href "#"
                 , onClick (GetTaskId "")
@@ -473,27 +450,57 @@ viewTaskFunctionsMenuButton model =
             [ a
                 [ class "dropdown-item"
                 , href "#"
-                , onClick NoOp
+                , onClick (SetTaskEntity taskEntity Status "Planned")
                 ]
                 [ text "Plan Task" ]
             , a
                 [ class "dropdown-item"
                 , href "#"
-                , onClick NoOp
+                , onClick (SetTaskEntity taskEntity Status "Unplanned")
                 ]
                 [ text "Unplan Task" ]
             , a
                 [ class "dropdown-item"
                 , href "#"
-                , onClick NoOp
+                , onClick (SetTaskEntity taskEntity Status "Done")
                 ]
                 [ text "Mark Task as Done" ]
             , a
                 [ class "dropdown-item"
                 , href "#"
-                , onClick NoOp
+                , onClick (SetTaskEntity taskEntity Status "Deleted")
                 ]
                 [ text "Put Task in Bin" ]
+            , div [ class "dropdown-divider" ] []
+            , a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
+                ]
+                [ text "Edit Task" ]
+            , a
+                [ class
+                    ("dropdown-item"
+                        ++ (if taskEntity.status /= 3 then
+                                " disabled"
+
+                            else
+                                ""
+                           )
+                    )
+                , href "#"
+                , onClick (DeleteTaskEntity taskId)
+                ]
+                [ text
+                    ("Delete Task"
+                        ++ (if taskId > 0 then
+                                " No. " ++ String.fromInt taskId
+
+                            else
+                                ""
+                           )
+                    )
+                ]
             ]
         ]
 

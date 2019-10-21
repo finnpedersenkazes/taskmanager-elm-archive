@@ -61,6 +61,7 @@ type alias TaskEntity =
 type TaskEntityField
     = Title
     | Description
+    | Status
 
 
 initTaskEntity : TaskEntity
