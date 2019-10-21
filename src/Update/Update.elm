@@ -190,8 +190,8 @@ update msg model =
         AfterGetTaskEntityList (Err _) ->
             ( Failure, Cmd.none )
 
-        CreateTaskEntity ->
-            ( CreatingEntity initTaskEntity, postTaskEntity initTaskEntity )
+        CreateTaskEntity taskEntity ->
+            ( CreatingEntity taskEntity, postTaskEntity taskEntity )
 
         AfterCreateTaskEntity (Ok taskEntity) ->
             ( DisplayingEntity taskEntity, Cmd.none )

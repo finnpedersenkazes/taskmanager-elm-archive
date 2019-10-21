@@ -16,7 +16,7 @@ type Msg
     | GetTaskEntityList
     | AfterGetTaskEntity (Result Http.Error TaskEntity)
     | AfterGetTaskEntityList (Result Http.Error TaskEntityList)
-    | CreateTaskEntity
+    | CreateTaskEntity TaskEntity
     | AfterCreateTaskEntity (Result Http.Error TaskEntity)
     | SaveTaskEntity TaskEntity
     | AfterSaveTaskEntity (Result Http.Error TaskEntity)

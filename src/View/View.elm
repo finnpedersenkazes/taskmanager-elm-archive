@@ -262,7 +262,7 @@ viewInput taskId =
                     , onInput GetTaskId
                     , type_ "number"
                     , class "form-control"
-                    , placeholder "Try \"Rome\""
+                    , placeholder "0"
                     ]
                     []
                 , div [ class "input-group-append" ]
@@ -291,7 +291,7 @@ viewForm taskEntity =
     Html.form
         [ onSubmit
             (if taskEntity.id == 0 then
-                CreateTaskEntity
+                CreateTaskEntity taskEntity
 
              else
                 SaveTaskEntity taskEntity
