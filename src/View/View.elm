@@ -455,7 +455,7 @@ viewTaskEntityMenuButton model =
 
 includeMenuItem : TaskEntity -> Int -> Bool
 includeMenuItem taskEntity status =
-    not (taskEntity.status == status)
+    taskEntity.status /= status
 
 
 viewMenuItem : TaskEntity -> Int -> Html Msg
@@ -493,42 +493,40 @@ appendPart1andPart2 taskEntity =
 
 viewTaskFunctionsMenuPart1 : TaskEntity -> List (Html Msg)
 viewTaskFunctionsMenuPart1 taskEntity =
-    List.map (\i -> viewMenuItem taskEntity i) [ 0, 1, 2, 3 ]
+    List.map (\i -> viewMenuItem taskEntity i) (List.filter (\i -> includeMenuItem taskEntity i) [ 0, 1, 2, 3 ])
 
 
 viewTaskFunctionsMenuPart2 : TaskEntity -> List (Html Msg)
 viewTaskFunctionsMenuPart2 taskEntity =
-    [ div [ class "dropdown-divider" ] []
-    , a
-        [ class "dropdown-item"
-        , href "#"
-        , onClick (SetTaskEntity taskEntity Title taskEntity.title)
-        ]
-        [ text "Edit Task" ]
-    , a
-        [ class
-            ("dropdown-item"
-                ++ (if taskEntity.status /= 3 then
-                        " disabled"
+    [ div [ class "dropdown-divider" ] [] ]
+        ++ [ a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
+                ]
+                [ text "Edit Task" ]
+           ]
+        ++ (if taskEntity.status == 3 then
+                [ a
+                    [ class "dropdown-item"
+                    , href "#"
+                    , onClick (DeleteTaskEntity taskEntity.id)
+                    ]
+                    [ text
+                        ("Delete Task"
+                            ++ (if taskEntity.id > 0 then
+                                    " No. " ++ String.fromInt taskEntity.id
 
-                    else
-                        ""
-                   )
-            )
-        , href "#"
-        , onClick (DeleteTaskEntity taskEntity.id)
-        ]
-        [ text
-            ("Delete Task"
-                ++ (if taskEntity.id > 0 then
-                        " No. " ++ String.fromInt taskEntity.id
+                                else
+                                    ""
+                               )
+                        )
+                    ]
+                ]
 
-                    else
-                        ""
-                   )
-            )
-        ]
-    ]
+            else
+                []
+           )
 
 
 viewTaskFunctionsMenuButton : Model -> Html Msg
