@@ -168,6 +168,24 @@ update msg model =
 
                                 _ ->
                                     taskEntity
+
+                        Urgency ->
+                            taskEntity
+
+                        Duration ->
+                            taskEntity
+
+                        AttentionDate ->
+                            taskEntity
+
+                        Deadline ->
+                            taskEntity
+
+                        PlannedDate ->
+                            taskEntity
+
+                        PlannedStartingTime ->
+                            taskEntity
             in
             ( EditingEntity updatedTaskEntity, Cmd.none )
 

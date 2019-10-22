@@ -90,12 +90,12 @@ viewTaskEntity model =
                     [ viewTaskEntityField taskEntity Title True
                     , viewTaskEntityField taskEntity Description True
                     , viewTaskEntityField taskEntity Status True
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Urgency: ", viewUrgency taskEntity.urgency ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Duration: ", String.fromInt taskEntity.durationMinutes, " minutes" ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Attention Date: ", taskEntity.attentionDate ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Deadline: ", taskEntity.deadline ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Date: ", taskEntity.plannedDate ]) ]
-                    , div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Starting Time: ", iso8601ToHoursMinutes taskEntity.plannedStartingTime ]) ]
+                    , viewTaskEntityField taskEntity Urgency (taskEntity.status == 0)
+                    , viewTaskEntityField taskEntity Duration True
+                    , viewTaskEntityField taskEntity AttentionDate (taskEntity.status /= 1 && taskEntity.status /= 2)
+                    , viewTaskEntityField taskEntity Deadline (taskEntity.status /= 1 && taskEntity.status /= 2)
+                    , viewTaskEntityField taskEntity PlannedDate (taskEntity.status /= 0)
+                    , viewTaskEntityField taskEntity PlannedStartingTime (taskEntity.status /= 0)
                     ]
                 ]
 
@@ -129,6 +129,24 @@ viewTaskEntityField taskEntity taskField displayField =
 
             Status ->
                 div [ class "card-text text-secondary" ] [ text (String.concat [ "Status: ", viewStatus taskEntity.status ]) ]
+
+            Urgency ->
+                div [ class "card-text text-secondary" ] [ text (String.concat [ "Urgency: ", viewUrgency taskEntity.urgency ]) ]
+
+            Duration ->
+                div [ class "card-text text-secondary" ] [ text (String.concat [ "Duration: ", String.fromInt taskEntity.durationMinutes, " minutes" ]) ]
+
+            AttentionDate ->
+                div [ class "card-text text-secondary" ] [ text (String.concat [ "Attention Date: ", taskEntity.attentionDate ]) ]
+
+            Deadline ->
+                div [ class "card-text text-secondary" ] [ text (String.concat [ "Deadline: ", taskEntity.deadline ]) ]
+
+            PlannedDate ->
+                div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Date: ", taskEntity.plannedDate ]) ]
+
+            PlannedStartingTime ->
+                div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Starting Time: ", iso8601ToHoursMinutes taskEntity.plannedStartingTime ]) ]
 
     else
         span [] []
@@ -411,6 +429,36 @@ viewTaskEntityMenuButton model =
         ]
 
 
+viewMenuItem : TaskEntity -> Int -> Html Msg
+viewMenuItem taskEntity status =
+    let
+        statusText =
+            case status of
+                0 ->
+                    "Unplanned"
+
+                _ ->
+                    "Unknown Status"
+
+        buttonText =
+            case status of
+                0 ->
+                    "Unplan Task"
+
+                _ ->
+                    "Unknown Status"
+
+        showMenuItem =
+            taskEntity.status /= status
+    in
+    a
+        [ class "dropdown-item"
+        , href "#"
+        , onClick (SetTaskEntity taskEntity Status statusText)
+        ]
+        [ text buttonText ]
+
+
 viewTaskFunctionsMenuButton : Model -> Html Msg
 viewTaskFunctionsMenuButton model =
     let
@@ -450,15 +498,15 @@ viewTaskFunctionsMenuButton model =
             [ a
                 [ class "dropdown-item"
                 , href "#"
-                , onClick (SetTaskEntity taskEntity Status "Planned")
-                ]
-                [ text "Plan Task" ]
-            , a
-                [ class "dropdown-item"
-                , href "#"
                 , onClick (SetTaskEntity taskEntity Status "Unplanned")
                 ]
                 [ text "Unplan Task" ]
+            , a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick (SetTaskEntity taskEntity Status "Planned")
+                ]
+                [ text "Plan Task" ]
             , a
                 [ class "dropdown-item"
                 , href "#"

@@ -62,6 +62,12 @@ type TaskEntityField
     = Title
     | Description
     | Status
+    | Urgency
+    | Duration
+    | AttentionDate
+    | Deadline
+    | PlannedDate
+    | PlannedStartingTime
 
 
 initTaskEntity : TaskEntity
