@@ -100,6 +100,10 @@ viewTaskEntity model =
                 ]
 
         DisplayingEntityList taskEntityList ->
+            let
+                sortedList =
+                    List.sortBy .status taskEntityList
+            in
             div [ class "card", style "width" "22rem" ]
                 [ div [ class "card-body" ]
                     [ h5 [ class "card-title text-success" ] [ text (String.concat [ "Task List" ]) ]
@@ -111,7 +115,7 @@ viewTaskEntity model =
                                 , th [ scope "col" ] [ text "status" ]
                                 ]
                             ]
-                        , tbody [] (List.map (\taskEntity -> viewTaskEntityLine taskEntity) taskEntityList)
+                        , tbody [] (List.map (\taskEntity -> viewTaskEntityLine taskEntity) sortedList)
                         ]
                     ]
                 ]
@@ -186,6 +190,25 @@ viewStatus status =
 
         _ ->
             "unknown status"
+
+
+viewStatusButton : Int -> String
+viewStatusButton status =
+    case status of
+        0 ->
+            "Unplan Task"
+
+        1 ->
+            "Plan Task"
+
+        2 ->
+            " Mark Task as Done"
+
+        3 ->
+            "Put Task in the bin"
+
+        _ ->
+            "unknown status for button"
 
 
 
@@ -354,6 +377,7 @@ viewForm taskEntity =
                 ]
                 []
             ]
+        , viewTaskEntityField taskEntity Status True
         , div [ class "form-group" ]
             [ button
                 [ type_ "submit"
@@ -429,34 +453,82 @@ viewTaskEntityMenuButton model =
         ]
 
 
+includeMenuItem : TaskEntity -> Int -> Bool
+includeMenuItem taskEntity status =
+    not (taskEntity.status == status)
+
+
 viewMenuItem : TaskEntity -> Int -> Html Msg
 viewMenuItem taskEntity status =
     let
         statusText =
-            case status of
-                0 ->
-                    "Unplanned"
-
-                _ ->
-                    "Unknown Status"
+            viewStatus status
 
         buttonText =
-            case status of
-                0 ->
-                    "Unplan Task"
-
-                _ ->
-                    "Unknown Status"
+            viewStatusButton status
 
         showMenuItem =
             taskEntity.status /= status
     in
     a
-        [ class "dropdown-item"
+        [ class
+            ("dropdown-item"
+                ++ (if taskEntity.status == status then
+                        " disabled"
+
+                    else
+                        ""
+                   )
+            )
         , href "#"
         , onClick (SetTaskEntity taskEntity Status statusText)
         ]
         [ text buttonText ]
+
+
+appendPart1andPart2 : TaskEntity -> List (Html Msg)
+appendPart1andPart2 taskEntity =
+    List.append (viewTaskFunctionsMenuPart1 taskEntity) (viewTaskFunctionsMenuPart2 taskEntity)
+
+
+viewTaskFunctionsMenuPart1 : TaskEntity -> List (Html Msg)
+viewTaskFunctionsMenuPart1 taskEntity =
+    List.map (\i -> viewMenuItem taskEntity i) [ 0, 1, 2, 3 ]
+
+
+viewTaskFunctionsMenuPart2 : TaskEntity -> List (Html Msg)
+viewTaskFunctionsMenuPart2 taskEntity =
+    [ div [ class "dropdown-divider" ] []
+    , a
+        [ class "dropdown-item"
+        , href "#"
+        , onClick (SetTaskEntity taskEntity Title taskEntity.title)
+        ]
+        [ text "Edit Task" ]
+    , a
+        [ class
+            ("dropdown-item"
+                ++ (if taskEntity.status /= 3 then
+                        " disabled"
+
+                    else
+                        ""
+                   )
+            )
+        , href "#"
+        , onClick (DeleteTaskEntity taskEntity.id)
+        ]
+        [ text
+            ("Delete Task"
+                ++ (if taskEntity.id > 0 then
+                        " No. " ++ String.fromInt taskEntity.id
+
+                    else
+                        ""
+                   )
+            )
+        ]
+    ]
 
 
 viewTaskFunctionsMenuButton : Model -> Html Msg
@@ -469,15 +541,12 @@ viewTaskFunctionsMenuButton model =
 
                 _ ->
                     initTaskEntity
-
-        taskId =
-            taskEntity.id
     in
     div [ class "btn-group", role "group" ]
         [ button
             [ class
                 ("btn btn-outline-primary dropdown-toggle"
-                    ++ (if taskId == 0 then
+                    ++ (if taskEntity.id == 0 then
                             " disabled"
 
                         else
@@ -495,61 +564,7 @@ viewTaskFunctionsMenuButton model =
             [ class "dropdown-menu"
             , ariaLabelledby "dropdownMenuButton"
             ]
-            [ a
-                [ class "dropdown-item"
-                , href "#"
-                , onClick (SetTaskEntity taskEntity Status "Unplanned")
-                ]
-                [ text "Unplan Task" ]
-            , a
-                [ class "dropdown-item"
-                , href "#"
-                , onClick (SetTaskEntity taskEntity Status "Planned")
-                ]
-                [ text "Plan Task" ]
-            , a
-                [ class "dropdown-item"
-                , href "#"
-                , onClick (SetTaskEntity taskEntity Status "Done")
-                ]
-                [ text "Mark Task as Done" ]
-            , a
-                [ class "dropdown-item"
-                , href "#"
-                , onClick (SetTaskEntity taskEntity Status "Deleted")
-                ]
-                [ text "Put Task in Bin" ]
-            , div [ class "dropdown-divider" ] []
-            , a
-                [ class "dropdown-item"
-                , href "#"
-                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
-                ]
-                [ text "Edit Task" ]
-            , a
-                [ class
-                    ("dropdown-item"
-                        ++ (if taskEntity.status /= 3 then
-                                " disabled"
-
-                            else
-                                ""
-                           )
-                    )
-                , href "#"
-                , onClick (DeleteTaskEntity taskId)
-                ]
-                [ text
-                    ("Delete Task"
-                        ++ (if taskId > 0 then
-                                " No. " ++ String.fromInt taskId
-
-                            else
-                                ""
-                           )
-                    )
-                ]
-            ]
+            (appendPart1andPart2 taskEntity)
         ]
 
 

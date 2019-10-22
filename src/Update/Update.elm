@@ -163,7 +163,7 @@ update msg model =
                                 "Done" ->
                                     { taskEntity | status = 2 }
 
-                                "Deleted" ->
+                                "In the bin" ->
                                     { taskEntity | status = 3 }
 
                                 _ ->
@@ -219,8 +219,8 @@ update msg model =
         AfterGetTaskEntity (Err _) ->
             ( Failure, Cmd.none )
 
-        AfterGetTaskEntityList (Ok taskEntity) ->
-            ( DisplayingEntityList taskEntity, Cmd.none )
+        AfterGetTaskEntityList (Ok taskEntityList) ->
+            ( DisplayingEntityList taskEntityList, Cmd.none )
 
         AfterGetTaskEntityList (Err _) ->
             ( Failure, Cmd.none )
