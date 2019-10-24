@@ -3,8 +3,8 @@ module View.View exposing (view)
 import Array exposing (..)
 import Debug
 import FontAwesome exposing (icon, search)
-import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, p, span, table, tbody, td, text, textarea, th, thead, tr, ul)
-import Html.Attributes exposing (attribute, class, href, id, placeholder, property, rows, scope, src, style, type_, value)
+import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, option, p, select, span, table, tbody, td, text, textarea, th, thead, tr, ul)
+import Html.Attributes exposing (attribute, class, href, id, placeholder, property, rows, scope, selected, src, style, type_, value)
 import Html.Attributes.Aria exposing (ariaExpanded, ariaHasPopup, ariaHidden, ariaLabel, ariaLabelledby, role)
 import Html.Events exposing (onClick, onInput, onSubmit)
 import Iso8601
@@ -74,10 +74,10 @@ viewTaskEntity model =
                     [ h5 [ class "card-title text-primary" ]
                         [ text
                             (if taskEntity.id == 0 then
-                                "Create a Task"
+                                "Creating a new Task"
 
                              else
-                                "Editing a Task"
+                                "Editing Task No. " ++ String.fromInt taskEntity.id
                             )
                         ]
                     , viewForm taskEntity
@@ -342,6 +342,15 @@ viewInput taskId =
         ]
 
 
+viewUrgencyOption : TaskEntity -> Int -> Html Msg
+viewUrgencyOption taskEntity urgency =
+    option
+        [ selected (taskEntity.urgency == urgency)
+        , value <| viewUrgency urgency
+        ]
+        [ text <| viewUrgency urgency ]
+
+
 viewForm : TaskEntity -> Html Msg
 viewForm taskEntity =
     Html.form
@@ -374,6 +383,79 @@ viewForm taskEntity =
                 , value taskEntity.description
                 , class "form-control"
                 , rows 4
+                ]
+                []
+            ]
+        , div [ class "form-group" ]
+            [ label []
+                [ text "Urgency" ]
+            , select
+                [ onInput (SetTaskEntity taskEntity Urgency)
+                , class "form-control"
+                ]
+                [ viewUrgencyOption taskEntity 0
+                , viewUrgencyOption taskEntity 1
+                , viewUrgencyOption taskEntity 2
+                , viewUrgencyOption taskEntity 3
+                ]
+            ]
+        , div [ class "form-group" ]
+            [ label []
+                [ text "Duration in minutes" ]
+            , input
+                [ type_ "text"
+                , placeholder "Duration"
+                , onInput (SetTaskEntity taskEntity Duration)
+                , value (String.fromInt taskEntity.durationMinutes)
+                , class "form-control"
+                ]
+                []
+            ]
+        , div [ class "form-group" ]
+            [ label []
+                [ text "Attention Date" ]
+            , input
+                [ type_ "date"
+                , placeholder ""
+                , onInput (SetTaskEntity taskEntity AttentionDate)
+                , value taskEntity.attentionDate
+                , class "form-control"
+                ]
+                []
+            ]
+        , div [ class "form-group" ]
+            [ label []
+                [ text "Deadline" ]
+            , input
+                [ type_ "date"
+                , placeholder ""
+                , onInput (SetTaskEntity taskEntity Deadline)
+                , value taskEntity.deadline
+                , class "form-control"
+                ]
+                []
+            ]
+        , div [ class "form-group" ]
+            [ label []
+                [ text "Planned Date" ]
+            , input
+                [ type_ "date"
+                , placeholder ""
+                , onInput (SetTaskEntity taskEntity PlannedDate)
+                , value taskEntity.plannedDate
+                , class "form-control"
+                ]
+                []
+            ]
+        , div [ class "form-group" ]
+            [ label []
+                [ text "Planned Time" ]
+            , input
+                [ type_ "time"
+                , placeholder ""
+                , onInput (SetTaskEntity taskEntity PlannedStartingTime)
+                , value taskEntity.plannedStartingTime
+                , class "form-control"
                 ]
                 []
             ]

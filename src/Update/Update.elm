@@ -170,22 +170,36 @@ update msg model =
                                     taskEntity
 
                         Urgency ->
-                            taskEntity
+                            case value of
+                                "Just do it" ->
+                                    { taskEntity | urgency = 0 }
+
+                                "Plan it" ->
+                                    { taskEntity | urgency = 1 }
+
+                                "Delegate it" ->
+                                    { taskEntity | urgency = 2 }
+
+                                "Don't do it" ->
+                                    { taskEntity | urgency = 3 }
+
+                                _ ->
+                                    taskEntity
 
                         Duration ->
-                            taskEntity
+                            { taskEntity | durationMinutes = Maybe.withDefault 0 (String.toInt value) }
 
                         AttentionDate ->
-                            taskEntity
+                            { taskEntity | attentionDate = value }
 
                         Deadline ->
-                            taskEntity
+                            { taskEntity | deadline = value }
 
                         PlannedDate ->
-                            taskEntity
+                            { taskEntity | plannedDate = value }
 
                         PlannedStartingTime ->
-                            taskEntity
+                            { taskEntity | plannedStartingTime = value }
             in
             ( EditingEntity updatedTaskEntity, Cmd.none )
 
