@@ -449,7 +449,7 @@ viewForm taskEntity =
             ]
         , div [ class "form-group" ]
             [ label []
-                [ text "Planned Time" ]
+                [ text ("Planned Time: " ++ iso8601ToHoursMinutes taskEntity.plannedStartingTime) ]
             , input
                 [ type_ "time"
                 , placeholder ""
