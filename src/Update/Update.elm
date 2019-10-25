@@ -180,7 +180,7 @@ update msg model =
                                 "Delegate it" ->
                                     { taskEntity | urgency = 2 }
 
-                                "Don't do it" ->
+                                "Look at it later" ->
                                     { taskEntity | urgency = 3 }
 
                                 _ ->
