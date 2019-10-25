@@ -228,7 +228,7 @@ viewStatusButton status =
             "Plan Task"
 
         2 ->
-            " Mark Task as Done"
+            "Mark Task as Done"
 
         3 ->
             "Put Task in the bin"
@@ -254,7 +254,7 @@ viewUrgency urgency =
             "Delegate it"
 
         3 ->
-            "Don't do it"
+            "Look at it later"
 
         _ ->
             "unknown urgency"
@@ -452,9 +452,9 @@ viewForm taskEntity =
                 SaveTaskEntity taskEntity
             )
         ]
-        [ viewFormField taskEntity Title "text" "Title" taskEntity.title
+        [ viewTaskEntityField taskEntity Status
+        , viewFormField taskEntity Title "text" "Title" taskEntity.title
         , viewFormField taskEntity Description "text" "Description" taskEntity.description
-        , viewTaskEntityField taskEntity Status
         , viewFormField taskEntity Urgency "text" "Urgency" taskEntity.description
         , viewFormField taskEntity Duration "text" "Duration in minutes" (String.fromInt taskEntity.durationMinutes)
         , viewFormField taskEntity AttentionDate "date" "Attention Date" taskEntity.attentionDate
