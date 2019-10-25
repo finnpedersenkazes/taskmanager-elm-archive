@@ -87,15 +87,15 @@ viewTaskEntity model =
         DisplayingEntity taskEntity ->
             div [ class "card", style "width" "18rem" ]
                 [ div [ class "card-body" ]
-                    [ viewTaskEntityField taskEntity Title True
-                    , viewTaskEntityField taskEntity Description True
-                    , viewTaskEntityField taskEntity Status True
-                    , viewTaskEntityField taskEntity Urgency (taskEntity.status == 0)
-                    , viewTaskEntityField taskEntity Duration True
-                    , viewTaskEntityField taskEntity AttentionDate (taskEntity.status /= 1 && taskEntity.status /= 2)
-                    , viewTaskEntityField taskEntity Deadline (taskEntity.status /= 1 && taskEntity.status /= 2)
-                    , viewTaskEntityField taskEntity PlannedDate (taskEntity.status /= 0)
-                    , viewTaskEntityField taskEntity PlannedStartingTime (taskEntity.status /= 0)
+                    [ viewTaskEntityField taskEntity Title
+                    , viewTaskEntityField taskEntity Description
+                    , viewTaskEntityField taskEntity Status
+                    , viewTaskEntityField taskEntity Urgency
+                    , viewTaskEntityField taskEntity Duration
+                    , viewTaskEntityField taskEntity AttentionDate
+                    , viewTaskEntityField taskEntity Deadline
+                    , viewTaskEntityField taskEntity PlannedDate
+                    , viewTaskEntityField taskEntity PlannedStartingTime
                     ]
                 ]
 
@@ -121,8 +121,34 @@ viewTaskEntity model =
                 ]
 
 
-viewTaskEntityField : TaskEntity -> TaskEntityField -> Bool -> Html Msg
-viewTaskEntityField taskEntity taskField displayField =
+showTaskEntityField : TaskEntity -> TaskEntityField -> Bool
+showTaskEntityField taskEntity taskEntityField =
+    case taskEntityField of
+        Urgency ->
+            taskEntity.status == 0
+
+        AttentionDate ->
+            taskEntity.status /= 1 && taskEntity.status /= 2
+
+        Deadline ->
+            taskEntity.status /= 1 && taskEntity.status /= 2
+
+        PlannedDate ->
+            taskEntity.status /= 0
+
+        PlannedStartingTime ->
+            taskEntity.status /= 0
+
+        _ ->
+            True
+
+
+viewTaskEntityField : TaskEntity -> TaskEntityField -> Html Msg
+viewTaskEntityField taskEntity taskField =
+    let
+        displayField =
+            showTaskEntityField taskEntity taskField
+    in
     if displayField then
         case taskField of
             Title ->
@@ -351,6 +377,70 @@ viewUrgencyOption taskEntity urgency =
         [ text <| viewUrgency urgency ]
 
 
+viewFormField : TaskEntity -> TaskEntityField -> String -> String -> String -> Html Msg
+viewFormField taskEntity taskEntityField inputType labelText valueText =
+    let
+        displayField =
+            showTaskEntityField taskEntity taskEntityField
+    in
+    if displayField then
+        case taskEntityField of
+            Description ->
+                div [ class "form-group" ]
+                    [ label []
+                        [ text labelText ]
+                    , textarea
+                        [ placeholder labelText
+                        , onInput (SetTaskEntity taskEntity taskEntityField)
+                        , value valueText
+                        , class "form-control"
+                        ]
+                        []
+                    ]
+
+            Urgency ->
+                div [ class "form-group" ]
+                    [ label []
+                        [ text labelText ]
+                    , select
+                        [ onInput (SetTaskEntity taskEntity taskEntityField)
+                        , class "form-control"
+                        ]
+                        (List.map (\i -> viewUrgencyOption taskEntity i) [ 0, 1, 2, 3 ])
+                    ]
+
+            PlannedStartingTime ->
+                div [ class "form-group" ]
+                    [ label []
+                        [ text labelText ]
+                    , input
+                        [ type_ inputType
+                        , placeholder ""
+                        , onInput (SetTaskEntity taskEntity PlannedStartingTime)
+                        , value taskEntity.plannedStartingTime
+                        , class "form-control"
+                        ]
+                        []
+                    ]
+
+            _ ->
+                div [ class "form-group" ]
+                    [ label []
+                        [ text labelText ]
+                    , input
+                        [ type_ inputType
+                        , placeholder labelText
+                        , onInput (SetTaskEntity taskEntity taskEntityField)
+                        , value valueText
+                        , class "form-control"
+                        ]
+                        []
+                    ]
+
+    else
+        span [] []
+
+
 viewForm : TaskEntity -> Html Msg
 viewForm taskEntity =
     Html.form
@@ -362,104 +452,15 @@ viewForm taskEntity =
                 SaveTaskEntity taskEntity
             )
         ]
-        [ div [ class "form-group" ]
-            [ label []
-                [ text "Title" ]
-            , input
-                [ type_ "text"
-                , placeholder "Title"
-                , onInput (SetTaskEntity taskEntity Title)
-                , value taskEntity.title
-                , class "form-control"
-                ]
-                []
-            ]
-        , div [ class "form-group" ]
-            [ label []
-                [ text "Description" ]
-            , textarea
-                [ placeholder "Description"
-                , onInput (SetTaskEntity taskEntity Description)
-                , value taskEntity.description
-                , class "form-control"
-                , rows 4
-                ]
-                []
-            ]
-        , div [ class "form-group" ]
-            [ label []
-                [ text "Urgency" ]
-            , select
-                [ onInput (SetTaskEntity taskEntity Urgency)
-                , class "form-control"
-                ]
-                [ viewUrgencyOption taskEntity 0
-                , viewUrgencyOption taskEntity 1
-                , viewUrgencyOption taskEntity 2
-                , viewUrgencyOption taskEntity 3
-                ]
-            ]
-        , div [ class "form-group" ]
-            [ label []
-                [ text "Duration in minutes" ]
-            , input
-                [ type_ "text"
-                , placeholder "Duration"
-                , onInput (SetTaskEntity taskEntity Duration)
-                , value (String.fromInt taskEntity.durationMinutes)
-                , class "form-control"
-                ]
-                []
-            ]
-        , div [ class "form-group" ]
-            [ label []
-                [ text "Attention Date" ]
-            , input
-                [ type_ "date"
-                , placeholder ""
-                , onInput (SetTaskEntity taskEntity AttentionDate)
-                , value taskEntity.attentionDate
-                , class "form-control"
-                ]
-                []
-            ]
-        , div [ class "form-group" ]
-            [ label []
-                [ text "Deadline" ]
-            , input
-                [ type_ "date"
-                , placeholder ""
-                , onInput (SetTaskEntity taskEntity Deadline)
-                , value taskEntity.deadline
-                , class "form-control"
-                ]
-                []
-            ]
-        , div [ class "form-group" ]
-            [ label []
-                [ text "Planned Date" ]
-            , input
-                [ type_ "date"
-                , placeholder ""
-                , onInput (SetTaskEntity taskEntity PlannedDate)
-                , value taskEntity.plannedDate
-                , class "form-control"
-                ]
-                []
-            ]
-        , div [ class "form-group" ]
-            [ label []
-                [ text ("Planned Time: " ++ iso8601ToHoursMinutes taskEntity.plannedStartingTime) ]
-            , input
-                [ type_ "time"
-                , placeholder ""
-                , onInput (SetTaskEntity taskEntity PlannedStartingTime)
-                , value taskEntity.plannedStartingTime
-                , class "form-control"
-                ]
-                []
-            ]
-        , viewTaskEntityField taskEntity Status True
+        [ viewFormField taskEntity Title "text" "Title" taskEntity.title
+        , viewFormField taskEntity Description "text" "Description" taskEntity.description
+        , viewTaskEntityField taskEntity Status
+        , viewFormField taskEntity Urgency "text" "Urgency" taskEntity.description
+        , viewFormField taskEntity Duration "text" "Duration in minutes" (String.fromInt taskEntity.durationMinutes)
+        , viewFormField taskEntity AttentionDate "date" "Attention Date" taskEntity.attentionDate
+        , viewFormField taskEntity Deadline "date" "Deadline" taskEntity.deadline
+        , viewFormField taskEntity PlannedDate "date" "Planned Date" taskEntity.plannedDate
+        , viewFormField taskEntity PlannedStartingTime "time" ("Planned Time: " ++ iso8601ToHoursMinutes taskEntity.plannedStartingTime) taskEntity.plannedDate
         , div [ class "form-group" ]
             [ button
                 [ type_ "submit"
