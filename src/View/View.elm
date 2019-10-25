@@ -3,7 +3,7 @@ module View.View exposing (view)
 import Array exposing (..)
 import Debug
 import FontAwesome exposing (icon, search)
-import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, option, p, select, span, table, tbody, td, text, textarea, th, thead, tr, ul)
+import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, option, p, pre, select, span, table, tbody, td, text, textarea, th, thead, tr, ul)
 import Html.Attributes exposing (attribute, class, href, id, placeholder, property, rows, scope, selected, src, style, type_, value)
 import Html.Attributes.Aria exposing (ariaExpanded, ariaHasPopup, ariaHidden, ariaLabel, ariaLabelledby, role)
 import Html.Events exposing (onClick, onInput, onSubmit)
@@ -155,7 +155,7 @@ viewTaskEntityField taskEntity taskField =
                 h5 [ class "card-title text-success" ] [ text (String.concat [ taskEntity.title, " (", String.fromInt taskEntity.id, ")" ]) ]
 
             Description ->
-                div [ class "card-title text-success" ] [ text (String.concat [ taskEntity.description ]) ]
+                pre [ class "card-title text-success" ] [ text (String.concat [ taskEntity.description ]) ]
 
             Status ->
                 div [ class "card-text text-secondary" ] [ text (String.concat [ "Status: ", viewStatus taskEntity.status ]) ]
