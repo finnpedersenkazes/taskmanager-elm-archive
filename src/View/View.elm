@@ -99,14 +99,47 @@ viewTaskEntity model =
                     ]
                 ]
 
-        DisplayingEntityList taskEntityList ->
+        DisplayingEntityList statusFilter taskEntityList ->
             let
+                selectedStatus =
+                    case statusFilter of
+                        "Unplanned" ->
+                            0
+
+                        "Planned" ->
+                            1
+
+                        "Done" ->
+                            2
+
+                        "In the bin" ->
+                            3
+
+                        _ ->
+                            -1
+
+                filteredList =
+                    if selectedStatus > -1 then
+                        List.sortBy .id (List.filter (\taskEntity -> taskEntity.status == selectedStatus) taskEntityList)
+
+                    else
+                        List.sortBy .status taskEntityList
+
                 sortedList =
-                    List.sortBy .status taskEntityList
+                    filteredList
             in
             div [ class "card", style "width" "22rem" ]
                 [ div [ class "card-body" ]
                     [ h5 [ class "card-title text-success" ] [ text (String.concat [ "Task List" ]) ]
+                    , div [ class "form-group" ]
+                        [ label []
+                            [ text "Status Filter" ]
+                        , select
+                            [ onInput (SortTaskEntityList taskEntityList)
+                            , class "form-control"
+                            ]
+                            (List.map (\i -> viewStatusOption statusFilter i) [ "All", viewStatus 0, viewStatus 1, viewStatus 2, viewStatus 3 ])
+                        ]
                     , table [ class "table" ]
                         [ thead []
                             [ tr []
@@ -235,6 +268,15 @@ viewStatusButton status =
 
         _ ->
             "unknown status for button"
+
+
+viewStatusOption : String -> String -> Html Msg
+viewStatusOption currentStatusFilter status =
+    option
+        [ selected (currentStatusFilter == status)
+        , value <| status
+        ]
+        [ text <| status ]
 
 
 
