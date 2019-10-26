@@ -234,13 +234,16 @@ update msg model =
             ( Failure, Cmd.none )
 
         AfterGetTaskEntityList (Ok taskEntityList) ->
-            ( DisplayingEntityList "All" taskEntityList, Cmd.none )
+            ( DisplayingEntityList "All" "" taskEntityList, Cmd.none )
 
         AfterGetTaskEntityList (Err _) ->
             ( Failure, Cmd.none )
 
-        SortTaskEntityList taskEntityList filterStatus ->
-            ( DisplayingEntityList filterStatus taskEntityList, Cmd.none )
+        FilterOnStatusTaskEntityList taskEntityList filterText filterStatus ->
+            ( DisplayingEntityList filterStatus filterText taskEntityList, Cmd.none )
+
+        FilterOnTextTaskEntityList taskEntityList filterStatus filterText ->
+            ( DisplayingEntityList filterStatus filterText taskEntityList, Cmd.none )
 
         CreateTaskEntity taskEntity ->
             ( CreatingEntity taskEntity, postTaskEntity taskEntity )

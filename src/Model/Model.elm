@@ -16,7 +16,8 @@ type Msg
     | GetTaskEntityList
     | AfterGetTaskEntity (Result Http.Error TaskEntity)
     | AfterGetTaskEntityList (Result Http.Error TaskEntityList)
-    | SortTaskEntityList TaskEntityList String
+    | FilterOnStatusTaskEntityList TaskEntityList String String
+    | FilterOnTextTaskEntityList TaskEntityList String String
     | CreateTaskEntity TaskEntity
     | AfterCreateTaskEntity (Result Http.Error TaskEntity)
     | SaveTaskEntity TaskEntity
@@ -36,7 +37,7 @@ type Model
     | CreatingEntity TaskEntity
     | EditingEntity TaskEntity
     | DisplayingEntity TaskEntity
-    | DisplayingEntityList String TaskEntityList
+    | DisplayingEntityList String String TaskEntityList
 
 
 type alias TaskEntityList =

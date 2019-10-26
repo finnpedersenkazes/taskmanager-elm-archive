@@ -99,7 +99,7 @@ viewTaskEntity model =
                     ]
                 ]
 
-        DisplayingEntityList statusFilter taskEntityList ->
+        DisplayingEntityList statusFilter textFilter taskEntityList ->
             let
                 selectedStatus =
                     case statusFilter of
@@ -126,19 +126,35 @@ viewTaskEntity model =
                         List.sortBy .status taskEntityList
 
                 sortedList =
-                    filteredList
+                    List.filter
+                        (\taskEntity -> String.contains (String.toLower textFilter) (String.toLower (taskEntity.title ++ taskEntity.description)))
+                        filteredList
             in
             div [ class "card", style "width" "22rem" ]
                 [ div [ class "card-body" ]
                     [ h5 [ class "card-title text-success" ] [ text (String.concat [ "Task List" ]) ]
-                    , div [ class "form-group" ]
-                        [ label []
-                            [ text "Status Filter" ]
-                        , select
-                            [ onInput (SortTaskEntityList taskEntityList)
-                            , class "form-control"
+                    , div [ class "input-group" ]
+                        [ div [ class "form-group" ]
+                            [ label []
+                                [ text "Search for" ]
+                            , input
+                                [ type_ "text"
+                                , placeholder "Search for"
+                                , onInput (FilterOnTextTaskEntityList taskEntityList statusFilter)
+                                , value textFilter
+                                , class "form-control"
+                                ]
+                                []
                             ]
-                            (List.map (\i -> viewStatusOption statusFilter i) [ "All", viewStatus 0, viewStatus 1, viewStatus 2, viewStatus 3 ])
+                        , div [ class "form-group" ]
+                            [ label []
+                                [ text "Status Filter" ]
+                            , select
+                                [ onInput (FilterOnStatusTaskEntityList taskEntityList textFilter)
+                                , class "form-control"
+                                ]
+                                (List.map (\i -> viewStatusOption statusFilter i) [ "All", viewStatus 0, viewStatus 1, viewStatus 2, viewStatus 3 ])
+                            ]
                         ]
                     , table [ class "table" ]
                         [ thead []
@@ -368,7 +384,7 @@ viewInput : Id -> Html Msg
 viewInput taskId =
     div [ class "card", style "width" "18rem" ]
         [ div [ class "card-body" ]
-            [ h5 [ class "card-title text-primary" ] [ text "Task Manager" ]
+            [ h5 [ class "card-title text-primary" ] [ text "Search Tasks" ]
             , p [ class "card-title" ]
                 [ span [ class "text-secondary" ] [ text "Enter a task id and then press " ]
                 , span
@@ -561,12 +577,6 @@ viewTaskEntityMenuButton model =
                 , onClick (SetTaskEntity initTaskEntity Title "")
                 ]
                 [ text "New Task" ]
-            , a
-                [ class "dropdown-item"
-                , href "#"
-                , onClick (GetTaskId "")
-                ]
-                [ text "Search for Task" ]
             , div [ class "dropdown-divider" ] []
             , a
                 [ class "dropdown-item"
