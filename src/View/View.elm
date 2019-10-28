@@ -57,7 +57,7 @@ viewTaskEntity model =
         LoadingList ->
             div [ class "card", style "width" "18rem" ]
                 [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text "Loading All Tasks" ]
+                    [ h5 [ class "card-title text-primary" ] [ text "Loading All Tasks. Please be patient the first time. " ]
                     ]
                 ]
 
