@@ -130,44 +130,54 @@ viewTaskEntity model =
                         (\taskEntity -> String.contains (String.toLower textFilter) (String.toLower (taskEntity.title ++ taskEntity.description)))
                         filteredList
             in
-            div [ class "card", style "width" "22rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-success" ] [ text (String.concat [ "Task List" ]) ]
-                    , div [ class "input-group" ]
-                        [ div [ class "form-group" ]
-                            [ label []
-                                [ text "Search for" ]
-                            , input
-                                [ type_ "text"
-                                , placeholder "Search for"
-                                , onInput (FilterOnTextTaskEntityList taskEntityList statusFilter)
-                                , value textFilter
-                                , class "form-control"
-                                ]
-                                []
+            div [ class "card", style "width" "25rem" ]
+                [ div []
+                    [ div [ class "input-group p-2" ]
+                        [ div [ class "input-group-prepend" ]
+                            [ span [ class "input-group-text" ] [ text "Filter" ]
                             ]
-                        , div [ class "form-group" ]
-                            [ label []
-                                [ text "Status Filter" ]
-                            , select
-                                [ onInput (FilterOnStatusTaskEntityList taskEntityList textFilter)
-                                , class "form-control"
-                                ]
-                                (List.map (\i -> viewStatusOption statusFilter i) [ "All", viewStatus 0, viewStatus 1, viewStatus 2, viewStatus 3 ])
+                        , input
+                            [ type_ "text"
+                            , placeholder "Search for"
+                            , onInput (FilterOnTextTaskEntityList taskEntityList statusFilter)
+                            , value textFilter
+                            , class "form-control"
                             ]
-                        ]
-                    , table [ class "table" ]
-                        [ thead []
-                            [ tr []
-                                [ th [ scope "col" ] [ text "id" ]
-                                , th [ scope "col" ] [ text "title" ]
-                                , th [ scope "col" ] [ text "status" ]
-                                ]
+                            []
+                        , select
+                            [ onInput (FilterOnStatusTaskEntityList taskEntityList textFilter)
+                            , class "form-control"
                             ]
-                        , tbody [] (List.map (\taskEntity -> viewTaskEntityLine taskEntity) sortedList)
+                            (List.map (\i -> viewStatusOption statusFilter i) [ "All", viewStatus 0, viewStatus 1, viewStatus 2, viewStatus 3 ])
                         ]
                     ]
+                , table
+                    [ class "card-table table table-hover" ]
+                    [ thead [ class "card-header" ]
+                        [ tr []
+                            [ th [ scope "col" ] [ text "Title" ]
+                            , th [ scope "col" ] [ text "Status" ]
+                            ]
+                        ]
+                    , tbody [] (List.map (\taskEntity -> viewTaskEntityLine taskEntity) sortedList)
+                    ]
                 ]
+
+
+viewTaskEntityLine : TaskEntity -> Html Msg
+viewTaskEntityLine taskEntity =
+    tr []
+        [ th [ scope "row" ]
+            [ button
+                [ type_ "button"
+                , class "btn btn-link"
+                , onClick
+                    (GetTaskEntity taskEntity.id)
+                ]
+                [ text (String.left 20 taskEntity.title) ]
+            ]
+        , td [] [ text (viewStatus taskEntity.status) ]
+        ]
 
 
 showTaskEntityField : TaskEntity -> TaskEntityField -> Bool
@@ -201,10 +211,10 @@ viewTaskEntityField taskEntity taskField =
     if displayField then
         case taskField of
             Title ->
-                h5 [ class "card-title text-success" ] [ text (String.concat [ taskEntity.title, " (", String.fromInt taskEntity.id, ")" ]) ]
+                h5 [ class "card-title text-primary" ] [ text (String.concat [ taskEntity.title, " (", String.fromInt taskEntity.id, ")" ]) ]
 
             Description ->
-                pre [ class "card-title text-success" ] [ text (String.concat [ taskEntity.description ]) ]
+                pre [ class "card-title text-primary" ] [ text (String.concat [ taskEntity.description ]) ]
 
             Status ->
                 div [ class "card-text text-secondary" ] [ text (String.concat [ "Status: ", viewStatus taskEntity.status ]) ]
@@ -229,23 +239,6 @@ viewTaskEntityField taskEntity taskField =
 
     else
         span [] []
-
-
-viewTaskEntityLine : TaskEntity -> Html Msg
-viewTaskEntityLine taskEntity =
-    tr []
-        [ th [ scope "row" ]
-            [ button
-                [ type_ "button"
-                , class "btn btn-link"
-                , onClick
-                    (GetTaskEntity taskEntity.id)
-                ]
-                [ text (String.fromInt taskEntity.id) ]
-            ]
-        , td [] [ text taskEntity.title ]
-        , td [] [ text (viewStatus taskEntity.status) ]
-        ]
 
 
 viewStatus : Int -> String
@@ -536,7 +529,11 @@ viewForm taskEntity =
             , button
                 [ class "btn btn-outline-warning"
                 , type_ "button"
-                , onClick (GetTaskEntity taskEntity.id)
+                , if taskEntity.id == 0 then
+                    onClick GetTaskEntityList
+
+                  else
+                    onClick (GetTaskEntity taskEntity.id)
                 ]
                 [ text "Cancel" ]
             ]
@@ -643,7 +640,7 @@ viewTaskFunctionsMenuPart2 taskEntity =
            ]
         ++ (if taskEntity.status == 3 then
                 [ a
-                    [ class "dropdown-item"
+                    [ class "dropdown-item text-danger"
                     , href "#"
                     , onClick (DeleteTaskEntity taskEntity.id)
                     ]
