@@ -130,7 +130,7 @@ viewTaskEntity model =
                         (\taskEntity -> String.contains (String.toLower textFilter) (String.toLower (taskEntity.title ++ taskEntity.description)))
                         filteredList
             in
-            div [ class "card", style "width" "25rem" ]
+            div [ class "card", style "width" "22rem" ]
                 [ div []
                     [ div [ class "input-group p-2" ]
                         [ div [ class "input-group-prepend" ]
@@ -155,7 +155,8 @@ viewTaskEntity model =
                     [ class "card-table table table-hover" ]
                     [ thead [ class "card-header" ]
                         [ tr []
-                            [ th [ scope "col" ] [ text "Title" ]
+                            [ th [ scope "col" ] [ text "" ]
+                            , th [ scope "col" ] [ text "Title" ]
                             , th [ scope "col" ] [ text "Status" ]
                             ]
                         ]
@@ -170,12 +171,13 @@ viewTaskEntityLine taskEntity =
         [ th [ scope "row" ]
             [ button
                 [ type_ "button"
-                , class "btn btn-link"
+                , class "btn btn-outline-primary"
                 , onClick
                     (GetTaskEntity taskEntity.id)
                 ]
-                [ text (String.left 20 taskEntity.title) ]
+                [ text "View" ]
             ]
+        , td [] [ text taskEntity.title ]
         , td [] [ text (viewStatus taskEntity.status) ]
         ]
 
