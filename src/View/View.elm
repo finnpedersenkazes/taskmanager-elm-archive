@@ -155,7 +155,7 @@ viewTaskEntity model =
                     [ class "card-table table table-hover" ]
                     [ thead [ class "card-header" ]
                         [ tr []
-                            [ th [ scope "col" ] [ text "" ]
+                            [ th [ scope "col" ] [ text "Action" ]
                             , th [ scope "col" ] [ text "Title" ]
                             , th [ scope "col" ] [ text "Status" ]
                             ]
@@ -171,7 +171,7 @@ viewTaskEntityLine taskEntity =
         [ th [ scope "row" ]
             [ button
                 [ type_ "button"
-                , class "btn btn-outline-primary"
+                , class "btn btn-outline-primary btn-sm"
                 , onClick
                     (GetTaskEntity taskEntity.id)
                 ]
