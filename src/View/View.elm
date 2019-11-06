@@ -118,12 +118,39 @@ viewTaskEntity model =
                         _ ->
                             -1
 
-                filteredList =
-                    if selectedStatus > -1 then
-                        List.sortBy .id (List.filter (\taskEntity -> taskEntity.status == selectedStatus) taskEntityList)
+                thirdColumnTitle =
+                    case statusFilter of
+                        "Unplanned" ->
+                            "Attention"
 
-                    else
-                        List.sortBy .status taskEntityList
+                        "Planned" ->
+                            "Planned"
+
+                        "Done" ->
+                            ""
+
+                        "In the bin" ->
+                            ""
+
+                        _ ->
+                            "Status"
+
+                filteredList =
+                    case statusFilter of
+                        "Unplanned" ->
+                            List.sortBy .attentionDate (List.filter (\taskEntity -> taskEntity.status == selectedStatus) taskEntityList)
+
+                        "Planned" ->
+                            List.sortBy .plannedDate (List.filter (\taskEntity -> taskEntity.status == selectedStatus) taskEntityList)
+
+                        "Done" ->
+                            List.sortBy .plannedDate (List.filter (\taskEntity -> taskEntity.status == selectedStatus) taskEntityList)
+
+                        "In the bin" ->
+                            List.sortBy .updatedAt (List.filter (\taskEntity -> taskEntity.status == selectedStatus) taskEntityList)
+
+                        _ ->
+                            List.sortBy .status taskEntityList
 
                 sortedList =
                     List.filter
@@ -157,16 +184,34 @@ viewTaskEntity model =
                         [ tr []
                             [ th [ scope "col" ] [ text "Action" ]
                             , th [ scope "col" ] [ text "Title" ]
-                            , th [ scope "col" ] [ text "Status" ]
+                            , th [ scope "col" ] [ text thirdColumnTitle ]
                             ]
                         ]
-                    , tbody [] (List.map (\taskEntity -> viewTaskEntityLine taskEntity) sortedList)
+                    , tbody [] (List.map (\taskEntity -> viewTaskEntityLine statusFilter taskEntity) sortedList)
                     ]
                 ]
 
 
-viewTaskEntityLine : TaskEntity -> Html Msg
-viewTaskEntityLine taskEntity =
+viewTaskEntityLine : String -> TaskEntity -> Html Msg
+viewTaskEntityLine statusFilter taskEntity =
+    let
+        thirdColumnElement =
+            case statusFilter of
+                "Unplanned" ->
+                    taskEntity.attentionDate
+
+                "Planned" ->
+                    taskEntity.plannedDate
+
+                "Done" ->
+                    ""
+
+                "In the bin" ->
+                    ""
+
+                _ ->
+                    viewStatus taskEntity.status
+    in
     tr []
         [ th [ scope "row" ]
             [ button
@@ -178,7 +223,7 @@ viewTaskEntityLine taskEntity =
                 [ text "View" ]
             ]
         , td [] [ text taskEntity.title ]
-        , td [] [ text (viewStatus taskEntity.status) ]
+        , td [] [ text thirdColumnElement ]
         ]
 
 
