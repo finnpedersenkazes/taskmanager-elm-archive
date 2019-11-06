@@ -258,31 +258,97 @@ viewTaskEntityField taskEntity taskField =
     if displayField then
         case taskField of
             Title ->
-                h5 [ class "card-title text-primary" ] [ text (String.concat [ taskEntity.title, " (", String.fromInt taskEntity.id, ")" ]) ]
+                h5 [ class "card-title text-primary" ]
+                    [ text
+                        (String.concat
+                            [ taskEntity.title
+                            , " ("
+                            , String.fromInt taskEntity.id
+                            , ")"
+                            ]
+                        )
+                    ]
 
             Description ->
-                pre [ class "card-title text-primary" ] [ text (String.concat [ taskEntity.description ]) ]
+                pre [ class "card-title text-primary" ]
+                    [ text (String.concat [ taskEntity.description ]) ]
 
             Status ->
-                div [ class "card-text text-secondary" ] [ text (String.concat [ "Status: ", viewStatus taskEntity.status ]) ]
+                div [ class "card-text text-secondary" ]
+                    [ text
+                        (String.concat
+                            [ "Status: "
+                            , viewStatus taskEntity.status
+                            ]
+                        )
+                    ]
 
             Urgency ->
-                div [ class "card-text text-secondary" ] [ text (String.concat [ "Urgency: ", viewUrgency taskEntity.urgency ]) ]
+                div [ class "card-text text-secondary" ]
+                    [ text
+                        (String.concat
+                            [ "Urgency: "
+                            , viewUrgency taskEntity.urgency
+                            ]
+                        )
+                    ]
 
             Duration ->
-                div [ class "card-text text-secondary" ] [ text (String.concat [ "Duration: ", String.fromInt taskEntity.durationMinutes, " minutes" ]) ]
+                div [ class "card-text text-secondary" ]
+                    [ text
+                        (String.concat
+                            [ "Duration: "
+                            , String.fromInt taskEntity.durationMinutes
+                            , " minutes"
+                            ]
+                        )
+                    ]
 
             AttentionDate ->
-                div [ class "card-text text-secondary" ] [ text (String.concat [ "Attention Date: ", taskEntity.attentionDate ]) ]
+                div [ class "card-text text-secondary" ]
+                    [ text
+                        (String.concat
+                            [ "Attention"
+                            , iso8601ToWeekday taskEntity.attentionDate
+                            , " "
+                            , taskEntity.attentionDate
+                            ]
+                        )
+                    ]
 
             Deadline ->
-                div [ class "card-text text-secondary" ] [ text (String.concat [ "Deadline: ", taskEntity.deadline ]) ]
+                div [ class "card-text text-secondary" ]
+                    [ text
+                        (String.concat
+                            [ "Deadline"
+                            , iso8601ToWeekday taskEntity.deadline
+                            , " "
+                            , taskEntity.deadline
+                            ]
+                        )
+                    ]
 
             PlannedDate ->
-                div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Date: ", taskEntity.plannedDate ]) ]
+                div [ class "card-text text-secondary" ]
+                    [ text
+                        (String.concat
+                            [ "Planned"
+                            , iso8601ToWeekday taskEntity.plannedDate
+                            , " "
+                            , taskEntity.plannedDate
+                            ]
+                        )
+                    ]
 
             PlannedStartingTime ->
-                div [ class "card-text text-secondary" ] [ text (String.concat [ "Planned Starting Time: ", iso8601ToHoursMinutes taskEntity.plannedStartingTime ]) ]
+                div [ class "card-text text-secondary" ]
+                    [ text
+                        (String.concat
+                            [ "Starting Time: "
+                            , iso8601ToHoursMinutes taskEntity.plannedStartingTime
+                            ]
+                        )
+                    ]
 
     else
         span [] []
@@ -370,6 +436,41 @@ iso8601ToHoursMinutes jsonDateTime =
 iso8601ToDateTime : String -> String
 iso8601ToDateTime jsonDateTime =
     String.slice 0 10 jsonDateTime
+
+
+iso8601ToWeekday : String -> String
+iso8601ToWeekday jsonDateTime =
+    case Iso8601.toTime jsonDateTime of
+        Ok posix ->
+            ": " ++ toEnglishWeekday (Time.toWeekday Time.utc posix)
+
+        Err _ ->
+            ""
+
+
+toEnglishWeekday : Time.Weekday -> String
+toEnglishWeekday weekday =
+    case weekday of
+        Time.Mon ->
+            "Monday"
+
+        Time.Tue ->
+            "Tuesday"
+
+        Time.Wed ->
+            "Wednesday"
+
+        Time.Thu ->
+            "Thursday"
+
+        Time.Fri ->
+            "Friday"
+
+        Time.Sat ->
+            "Saturday"
+
+        Time.Sun ->
+            "Sunday"
 
 
 
@@ -555,9 +656,9 @@ viewForm taskEntity =
         , viewFormField taskEntity Description "text" "Description" taskEntity.description
         , viewFormField taskEntity Urgency "text" "Urgency" taskEntity.description
         , viewFormField taskEntity Duration "text" "Duration in minutes" (String.fromInt taskEntity.durationMinutes)
-        , viewFormField taskEntity AttentionDate "date" "Attention Date" taskEntity.attentionDate
-        , viewFormField taskEntity Deadline "date" "Deadline" taskEntity.deadline
-        , viewFormField taskEntity PlannedDate "date" "Planned Date" taskEntity.plannedDate
+        , viewFormField taskEntity AttentionDate "date" ("Attention Date" ++ iso8601ToWeekday taskEntity.attentionDate) taskEntity.attentionDate
+        , viewFormField taskEntity Deadline "date" ("Deadline" ++ iso8601ToWeekday taskEntity.deadline) taskEntity.deadline
+        , viewFormField taskEntity PlannedDate "date" ("Planned Date" ++ iso8601ToWeekday taskEntity.plannedDate) taskEntity.plannedDate
         , viewFormField taskEntity PlannedStartingTime "time" ("Planned Time: " ++ iso8601ToHoursMinutes taskEntity.plannedStartingTime) taskEntity.plannedDate
         , div [ class "form-group" ]
             [ button
