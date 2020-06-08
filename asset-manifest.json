@@ -1,7 +1,7 @@
 {
   "main.css": "/taskmanager-elm/static/css/main.1b3244b8.chunk.css",
-  "main.js": "/taskmanager-elm/static/js/main.d6193b99.chunk.js",
-  "main.js.map": "/taskmanager-elm/static/js/main.d6193b99.chunk.js.map",
+  "main.js": "/taskmanager-elm/static/js/main.05706c06.chunk.js",
+  "main.js.map": "/taskmanager-elm/static/js/main.05706c06.chunk.js.map",
   "runtime~main.js": "/taskmanager-elm/static/js/runtime~main.8e20190d.js",
   "runtime~main.js.map": "/taskmanager-elm/static/js/runtime~main.8e20190d.js.map",
   "vendors~main.js": "/taskmanager-elm/static/js/vendors~main.b9063112.chunk.js",
@@ -11,5 +11,5 @@
   "index.html": "/taskmanager-elm/index.html",
   "logo.svg": "/taskmanager-elm/logo.svg",
   "manifest.json": "/taskmanager-elm/manifest.json",
-  "precache-manifest.237350343be2ecaf16eb329366be28ad.js": "/taskmanager-elm/precache-manifest.237350343be2ecaf16eb329366be28ad.js"
+  "precache-manifest.69be65d7e2bc1fd686f07895db21adf8.js": "/taskmanager-elm/precache-manifest.69be65d7e2bc1fd686f07895db21adf8.js"
 }
