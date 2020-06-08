@@ -198,10 +198,10 @@ viewTaskEntityLine statusFilter taskEntity =
         thirdColumnElement =
             case statusFilter of
                 "Unplanned" ->
-                    taskEntity.attentionDate
+                    toNiceDate taskEntity.attentionDate
 
                 "Planned" ->
-                    taskEntity.plannedDate
+                    toNiceDate taskEntity.plannedDate
 
                 "Done" ->
                     ""
@@ -446,6 +446,16 @@ iso8601ToWeekday jsonDateTime =
 
         Err _ ->
             ""
+
+toNiceDate : String -> String
+toNiceDate date =
+    let
+      year = String.slice 2 4 date
+      month = String.slice 5 7 date
+      day = String.slice 8 10 date
+    in
+      day ++ "/" ++ month ++ "/" ++ year
+
 
 
 toEnglishWeekday : Time.Weekday -> String
