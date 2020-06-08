@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/taskmanager-elm/favicon.ico"
   },
   {
-    "revision": "97af939cf4fc33c0baf4ce1eff59680d",
+    "revision": "7e8b321563ebc22439fafcd71ec6c965",
     "url": "/taskmanager-elm/index.html"
   },
   {
@@ -16,12 +16,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/taskmanager-elm/manifest.json"
   },
   {
-    "revision": "50e29d31522199bfe5f8",
+    "revision": "f6caefc0d70fbde83006",
     "url": "/taskmanager-elm/static/css/main.1b3244b8.chunk.css"
   },
   {
-    "revision": "50e29d31522199bfe5f8",
-    "url": "/taskmanager-elm/static/js/main.50e29d31.chunk.js"
+    "revision": "f6caefc0d70fbde83006",
+    "url": "/taskmanager-elm/static/js/main.f6caefc0.chunk.js"
   },
   {
     "revision": "8e20190d8efb772864b9",
