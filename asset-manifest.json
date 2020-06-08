@@ -1,11 +1,15 @@
 {
-  "main.css": "/taskmanager-elm/static/css/main.233a2046.chunk.css",
-  "main.js": "/taskmanager-elm/static/js/main.daa21945.chunk.js",
-  "main.css.map": "/taskmanager-elm/static/css/main.233a2046.chunk.css.map",
-  "main.js.map": "/taskmanager-elm/static/js/main.daa21945.chunk.js.map",
-  "runtime~main.js": "/taskmanager-elm/static/js/runtime~main.ef4ddf3f.js",
-  "runtime~main.js.map": "/taskmanager-elm/static/js/runtime~main.ef4ddf3f.js.map",
-  "vendors~main.js": "/taskmanager-elm/static/js/vendors~main.3ca81432.chunk.js",
-  "vendors~main.js.map": "/taskmanager-elm/static/js/vendors~main.3ca81432.chunk.js.map",
-  "index.html": "/taskmanager-elm/index.html"
+  "main.css": "/taskmanager-elm/static/css/main.1b3244b8.chunk.css",
+  "main.js": "/taskmanager-elm/static/js/main.50e29d31.chunk.js",
+  "main.js.map": "/taskmanager-elm/static/js/main.50e29d31.chunk.js.map",
+  "runtime~main.js": "/taskmanager-elm/static/js/runtime~main.8e20190d.js",
+  "runtime~main.js.map": "/taskmanager-elm/static/js/runtime~main.8e20190d.js.map",
+  "vendors~main.js": "/taskmanager-elm/static/js/vendors~main.b9063112.chunk.js",
+  "vendors~main.js.map": "/taskmanager-elm/static/js/vendors~main.b9063112.chunk.js.map",
+  "./service-worker.js": "/taskmanager-elm/./service-worker.js",
+  "favicon.ico": "/taskmanager-elm/favicon.ico",
+  "index.html": "/taskmanager-elm/index.html",
+  "logo.svg": "/taskmanager-elm/logo.svg",
+  "manifest.json": "/taskmanager-elm/manifest.json",
+  "precache-manifest.8cfa5c3f8a8e03f048773686d258761f.js": "/taskmanager-elm/precache-manifest.8cfa5c3f8a8e03f048773686d258761f.js"
 }
