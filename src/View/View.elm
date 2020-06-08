@@ -332,7 +332,11 @@ viewTaskEntityField taskEntity taskField =
                 div [ class "card-text text-secondary" ]
                     [ text
                         (String.concat
-                            [ "Planned"
+                            [ if taskEntity.status == 2 then
+                                "Done"
+
+                              else
+                                "Planned"
                             , iso8601ToWeekday taskEntity.plannedDate
                             , " "
                             , taskEntity.plannedDate
@@ -344,7 +348,11 @@ viewTaskEntityField taskEntity taskField =
                 div [ class "card-text text-secondary" ]
                     [ text
                         (String.concat
-                            [ "Starting Time: "
+                            [ if taskEntity.status == 2 then
+                                "Started at: "
+
+                              else
+                                "Starting Time: "
                             , iso8601ToHoursMinutes taskEntity.plannedStartingTime
                             ]
                         )
@@ -447,15 +455,26 @@ iso8601ToWeekday jsonDateTime =
         Err _ ->
             ""
 
+
 toNiceDate : String -> String
 toNiceDate date =
     let
-      year = String.slice 2 4 date
-      month = String.slice 5 7 date
-      day = String.slice 8 10 date
-    in
-      day ++ "/" ++ month ++ "/" ++ year
+        year =
+            String.slice 2 4 date
 
+        month =
+            String.slice 5 7 date
+
+        day =
+            String.slice 8 10 date
+    in
+    String.concat
+        [ day
+        , "/"
+        , month
+        , "/"
+        , year
+        ]
 
 
 toEnglishWeekday : Time.Weekday -> String
