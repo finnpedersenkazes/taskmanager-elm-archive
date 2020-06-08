@@ -333,7 +333,7 @@ viewTaskEntityField taskEntity taskField =
                     [ text
                         (String.concat
                             [ if taskEntity.status == 2 then
-                                "Done"
+                                "Finished"
 
                               else
                                 "Planned"
