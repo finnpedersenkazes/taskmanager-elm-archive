@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/taskmanager-elm/favicon.ico"
   },
   {
-    "revision": "c7568bd4c79f0e6b6a190c7334347981",
+    "revision": "28e77f6635612aaa1c8d415af1394a99",
     "url": "/taskmanager-elm/index.html"
   },
   {
@@ -16,19 +16,19 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/taskmanager-elm/manifest.json"
   },
   {
-    "revision": "05706c06ca4d954df88e",
-    "url": "/taskmanager-elm/static/css/main.1b3244b8.chunk.css"
+    "revision": "ff53d01bbfcc703d5227",
+    "url": "/taskmanager-elm/static/css/main.6c3d579e.chunk.css"
   },
   {
-    "revision": "05706c06ca4d954df88e",
-    "url": "/taskmanager-elm/static/js/main.05706c06.chunk.js"
+    "revision": "ff53d01bbfcc703d5227",
+    "url": "/taskmanager-elm/static/js/main.ff53d01b.chunk.js"
   },
   {
     "revision": "8e20190d8efb772864b9",
     "url": "/taskmanager-elm/static/js/runtime~main.8e20190d.js"
   },
   {
-    "revision": "b9063112a1dd4b93007d",
-    "url": "/taskmanager-elm/static/js/vendors~main.b9063112.chunk.js"
+    "revision": "0b49ec49a892799f59f3",
+    "url": "/taskmanager-elm/static/js/vendors~main.0b49ec49.chunk.js"
   }
 ]);
