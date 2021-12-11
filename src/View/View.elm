@@ -1,102 +1,87 @@
 module View.View exposing (view)
 
 import Array exposing (..)
-import Debug
-import FontAwesome exposing (icon, search)
-import Html exposing (Html, a, br, button, div, h1, h2, h3, h4, h5, i, img, input, label, li, option, p, pre, select, span, table, tbody, td, text, textarea, th, thead, tr, ul)
-import Html.Attributes exposing (attribute, class, href, id, placeholder, property, rows, scope, selected, src, style, type_, value)
+import Html exposing (..)
+import Html.Attributes exposing (attribute, class, href, id, placeholder, scope, selected, style, type_, value)
 import Html.Attributes.Aria exposing (ariaExpanded, ariaHasPopup, ariaHidden, ariaLabel, ariaLabelledby, role)
 import Html.Events exposing (onClick, onInput, onSubmit)
 import Iso8601
 import Model.Model exposing (..)
-import Round
-import Time exposing (Posix, millisToPosix, toHour, toMinute, utc)
+import Time exposing (utc)
+
+
+cardBody : List (Html Msg) -> Html Msg
+cardBody list =
+    div [ class "card", style "width" "18rem" ]
+        [ div [ class "card-body" ]
+            list
+        ]
+
+
+cardBodyTitle : String -> Html Msg
+cardBodyTitle title =
+    h5 [ class "card-title text-primary" ] [ text title ]
+
+
+cardBodyTitleOnly : String -> Html Msg
+cardBodyTitleOnly title =
+    cardBody
+        [ cardBodyTitle title
+        ]
 
 
 viewTaskEntity : Model -> Html Msg
 viewTaskEntity model =
     case model of
         Failure ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text "Something went wrong." ]
-                    ]
-                ]
+            cardBodyTitleOnly "Something went wrong."
 
         NotImplementedYet ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text "This function has not been implemented yet." ]
-                    ]
-                ]
+            cardBodyTitleOnly "This function has not been implemented yet."
 
         HomePage ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text "Welcome to Task Manager." ]
-                    ]
-                ]
+            cardBodyTitleOnly "Welcome to Task Manager."
 
         Typing taskId ->
             viewInput taskId
 
         Loading taskId ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text ("Loading Task No.: " ++ String.fromInt taskId) ]
-                    ]
-                ]
+            cardBodyTitleOnly ("Loading Task No.: " ++ String.fromInt taskId)
 
         Deleting taskId ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text ("Deleting Task No.: " ++ String.fromInt taskId) ]
-                    ]
-                ]
+            cardBodyTitleOnly ("Deleting Task No.: " ++ String.fromInt taskId)
 
         LoadingList ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text "Loading All Tasks. Please be patient the first time. " ]
-                    ]
-                ]
+            cardBodyTitleOnly "Loading All Tasks. Please be patient the first time."
 
-        CreatingEntity taskEntity ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ] [ text "Creating a Task" ]
-                    ]
-                ]
+        CreatingEntity _ ->
+            cardBodyTitleOnly "Creating a Task"
 
         EditingEntity taskEntity ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ h5 [ class "card-title text-primary" ]
-                        [ text
-                            (if taskEntity.id == 0 then
-                                "Creating a new Task"
+            let
+                title =
+                    if taskEntity.id == 0 then
+                        "Creating a new Task"
 
-                             else
-                                "Editing Task No. " ++ String.fromInt taskEntity.id
-                            )
-                        ]
-                    , viewForm taskEntity
-                    ]
+                    else
+                        "Editing Task No. " ++ String.fromInt taskEntity.id
+            in
+            cardBody
+                [ cardBodyTitle title
+                , viewForm taskEntity
                 ]
 
         DisplayingEntity taskEntity ->
-            div [ class "card", style "width" "18rem" ]
-                [ div [ class "card-body" ]
-                    [ viewTaskEntityField taskEntity Title
-                    , viewTaskEntityField taskEntity Description
-                    , viewTaskEntityField taskEntity Status
-                    , viewTaskEntityField taskEntity Urgency
-                    , viewTaskEntityField taskEntity Duration
-                    , viewTaskEntityField taskEntity AttentionDate
-                    , viewTaskEntityField taskEntity Deadline
-                    , viewTaskEntityField taskEntity PlannedDate
-                    , viewTaskEntityField taskEntity PlannedStartingTime
-                    ]
+            cardBody
+                [ viewTaskEntityField taskEntity Title
+                , viewTaskEntityField taskEntity Description
+                , viewTaskEntityField taskEntity Status
+                , viewTaskEntityField taskEntity Urgency
+                , viewTaskEntityField taskEntity Duration
+                , viewTaskEntityField taskEntity AttentionDate
+                , viewTaskEntityField taskEntity Deadline
+                , viewTaskEntityField taskEntity PlannedDate
+                , viewTaskEntityField taskEntity PlannedStartingTime
                 ]
 
         DisplayingEntityList statusFilter textFilter taskEntityList ->
@@ -441,11 +426,6 @@ iso8601ToHoursMinutes jsonDateTime =
     String.slice 11 16 jsonDateTime
 
 
-iso8601ToDateTime : String -> String
-iso8601ToDateTime jsonDateTime =
-    String.slice 0 10 jsonDateTime
-
-
 iso8601ToWeekday : String -> String
 iso8601ToWeekday jsonDateTime =
     case Iso8601.toTime jsonDateTime of
@@ -717,20 +697,8 @@ viewForm taskEntity =
         ]
 
 
-viewTaskEntityMenuButton : Model -> Html Msg
-viewTaskEntityMenuButton model =
-    let
-        taskEntity =
-            case model of
-                DisplayingEntity taskEntity2 ->
-                    taskEntity2
-
-                _ ->
-                    initTaskEntity
-
-        taskId =
-            taskEntity.id
-    in
+viewTaskEntityMenuButton : Html Msg
+viewTaskEntityMenuButton =
     div [ class "btn-group", role "group" ]
         [ button
             [ class "btn btn-outline-primary dropdown-toggle"
@@ -775,9 +743,6 @@ viewMenuItem taskEntity status =
 
         buttonText =
             viewStatusButton status
-
-        showMenuItem =
-            taskEntity.status /= status
     in
     a
         [ class
@@ -807,15 +772,10 @@ viewTaskFunctionsMenuPart1 taskEntity =
 
 viewTaskFunctionsMenuPart2 : TaskEntity -> List (Html Msg)
 viewTaskFunctionsMenuPart2 taskEntity =
-    [ div [ class "dropdown-divider" ] [] ]
-        ++ [ a
-                [ class "dropdown-item"
-                , href "#"
-                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
-                ]
-                [ text "Edit Task" ]
-           ]
-        ++ (if taskEntity.status == 3 then
+    let
+        deleteTask : List (Html Msg)
+        deleteTask =
+            if taskEntity.status == 3 then
                 [ a
                     [ class "dropdown-item text-danger"
                     , href "#"
@@ -835,7 +795,20 @@ viewTaskFunctionsMenuPart2 taskEntity =
 
             else
                 []
-           )
+
+        editTask : List (Html Msg)
+        editTask =
+            [ a
+                [ class "dropdown-item"
+                , href "#"
+                , onClick (SetTaskEntity taskEntity Title taskEntity.title)
+                ]
+                [ text "Edit Task" ]
+            ]
+    in
+    div [ class "dropdown-divider" ] []
+        :: editTask
+        ++ deleteTask
 
 
 viewTaskFunctionsMenuButton : Model -> Html Msg
@@ -877,22 +850,10 @@ viewTaskFunctionsMenuButton model =
 
 viewMenu : Model -> Html Msg
 viewMenu model =
-    let
-        taskEntity =
-            case model of
-                DisplayingEntity taskEntity2 ->
-                    taskEntity2
-
-                _ ->
-                    initTaskEntity
-
-        taskId =
-            taskEntity.id
-    in
     div [ class "p-2" ]
         [ div [ class "btn-toolbar", role "toolbar", ariaLabel "Toolbar" ]
             [ div [ class "btn-group mr-2", role "group", ariaLabel "TaskEntity Menu Buttons" ]
-                [ viewTaskEntityMenuButton model
+                [ viewTaskEntityMenuButton
                 , viewTaskFunctionsMenuButton model
                 ]
             , div [ class "btn-group mr-2", role "group", ariaLabel "TaskEntity Menu Buttons" ]
