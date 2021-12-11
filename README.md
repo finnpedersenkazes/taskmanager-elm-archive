@@ -1,11 +1,15 @@
-# Elm App
+# Task Manager App
 
-The task manager app is created using create-elm-app.
+The app can be found here:
 
-The backend is written in Ruby on Rails and the API can be accessed here.
+https://finnpedersenkazes.github.io/taskmanager-elm/
+
+
+The backend is written in Ruby on Rails and the API can be accessed here:
 
 https://taskmanager01-api.herokuapp.com/tasks
 
+The task manager app is created using create-elm-app.
 
 
 # Elm App

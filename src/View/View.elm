@@ -40,7 +40,10 @@ viewTaskEntity model =
             cardBodyTitleOnly "This function has not been implemented yet."
 
         HomePage ->
-            cardBodyTitleOnly "Welcome to Task Manager."
+            cardBody
+                [ cardBodyTitle "Welcome to Task Manager"
+                , text "Version 2021-12-11 16:52"
+                ]
 
         Typing taskId ->
             viewInput taskId
