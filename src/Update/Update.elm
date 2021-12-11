@@ -1,12 +1,10 @@
 module Update.Update exposing (api, deleteTaskEntity, getTaskEntity, getTaskEntityList, patchTaskEntity, postTaskEntity, taskEntityDecoder, taskEntityJson, taskEntityListDecoder, update)
 
-import Debug exposing (log)
 import Http
-import Json.Decode as Decode exposing (Decoder, andThen, fail, field, float, int, list, map, map2, map5, string, succeed)
-import Json.Decode.Pipeline as Pipeline exposing (custom, hardcoded, optional, required)
-import Json.Encode as Encode exposing (Value, encode, object)
+import Json.Decode as Decode exposing (Decoder, int, string)
+import Json.Decode.Pipeline exposing (optional, required)
+import Json.Encode as Encode exposing (Value, object)
 import Model.Model exposing (..)
-import Update.Secrets exposing (appId)
 
 
 api : String

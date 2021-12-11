@@ -4,5 +4,5 @@ import Model.Model exposing (..)
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
